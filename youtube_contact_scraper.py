@@ -10,7 +10,7 @@ from googleapiclient.errors import HttpError
 class YouTubeScraper:
     def __init__(self, api_keys: List[str], db_params: dict):
         self.api_keys = api_keys
-        self.current_api_index = 0  # Переименовал для ясности
+        self.current_api_index = 0
         self.db_params = db_params
         self.youtube = self._build_youtube_client()  # Инициализация клиента при создании
         self.topics = [
