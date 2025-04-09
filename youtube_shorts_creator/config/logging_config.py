@@ -8,6 +8,6 @@ def configure_logging():
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
             logging.StreamHandler(),
-            # logging.FileHandler('app.log')  # Можно добавить запись в файл
+            logging.FileHandler('app.log')
         ]
     )
