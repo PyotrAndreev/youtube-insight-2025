@@ -10,9 +10,9 @@ from googleapiclient.errors import HttpError
 class YouTubeScraper:
     def __init__(self, api_keys: List[str], db_params: dict):
         self.api_keys = api_keys
-        self.api_index = 0
+        self.current_api_index = 0  # Переименовал для ясности
         self.db_params = db_params
-        self.youtube = self._build_youtube_client()
+        self.youtube = self._build_youtube_client()  # Инициализация клиента при создании
         self.topics = [
             ("ai", 10),
             ("game", 8),
@@ -27,9 +27,18 @@ class YouTubeScraper:
         ]
 
     def _build_youtube_client(self):
-        api_key = self.api_keys[self.api_index % len(self.api_keys)]
-        self.api_index += 1
+        """Создаёт новый клиент YouTube API с текущим ключом"""
+        if not self.api_keys:
+            raise ValueError("Не предоставлены API ключи YouTube")
+        
+        api_key = self.api_keys[self.current_api_index % len(self.api_keys)]
         return build("youtube", "v3", developerKey=api_key)
+
+    def _rotate_api_key(self):
+        """Переключается на следующий API ключ"""
+        self.current_api_index += 1
+        self.youtube = self._build_youtube_client()
+        print(f"Переключились на API ключ #{self.current_api_index + 1}")
 
     def get_weighted_random_topic(self) -> str:
         topics, weights = zip(*self.topics)
@@ -38,6 +47,7 @@ class YouTubeScraper:
     def fetch_channels(self, query: str, pages: int = 3, results_per_page: int = 10) -> List[str]:
         channel_ids = set()
         next_page_token = None
+        
         for _ in range(pages):
             try:
                 request = self.youtube.search().list(
@@ -49,17 +59,25 @@ class YouTubeScraper:
                     pageToken=next_page_token
                 )
                 response = request.execute()
+                
                 for item in response.get("items", []):
-                    channel_ids.add(item["id"]["channelId"])
+                    if "id" in item and "channelId" in item["id"]:
+                        channel_ids.add(item["id"]["channelId"])
+                
                 next_page_token = response.get("nextPageToken")
                 if not next_page_token:
                     break
+                    
             except HttpError as e:
                 print(f"YouTube API Error: {e}")
-                break
+                if e.resp.status == 403:
+                    self._rotate_api_key()
+                else:
+                    break
             except Exception as e:
                 print(f"Unexpected error fetching channels: {e}")
                 break
+                
         return list(channel_ids)
 
     def filter_existing_channels(self, channel_ids: List[str]) -> List[str]:
@@ -142,7 +160,7 @@ class YouTubeScraper:
 
                 if valid_channels:
                     success = self.save_channels(valid_channels)
-                    print(f" Сохранено: {len(valid_channels)} каналов" if success else "❌ Ошибка при сохранении")
+                    print(f" Сохранено: {len(valid_channels)} каналов" if success else "Ошибка при сохранении")
 
                 delay = random.randint(15, 45)
                 print(f" Пауза {delay} сек...")
