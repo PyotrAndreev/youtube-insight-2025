@@ -1,85 +1,121 @@
 import logging
+import subprocess
+import os
 from pathlib import Path
-from typing import Optional
-from PIL import Image
-from moviepy import VideoFileClip
-from moviepy import *
-from moviepy.video.fx import *
-from moviepy.video.fx import Resize
+from datetime import datetime
+from moviepy.video.io.VideoFileClip import VideoFileClip
+from moviepy.video.fx import all as vfx
+from moviepy.video.fx import resize, crop
+import yt_dlp
 
 # Настроим логирование
 logger = logging.getLogger(__name__)
 
-class YouTubeShortsCreator:
-    def __init__(self):
-        self.output_dir = Path("processed_shorts")
-        self.download_dir = Path("downloads")
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.download_dir.mkdir(parents=True, exist_ok=True)
+# Папки для хранения файлов
+download_dir = Path("downloads")
+download_dir.mkdir(parents=True, exist_ok=True)
 
-    def process_video(self, video_id: str):
-        print(f"Обрабатываю видео: {video_id}")
+segments_dir = Path("video_segments")
+segments_dir.mkdir(parents=True, exist_ok=True)
 
-        # 1. Скачивание видео
-        input_path = self._download_video(video_id)
-        if not input_path:
-            print("Не удалось скачать видео")
-            return None
+output_dir = Path("processed_shorts")
+output_dir.mkdir(parents=True, exist_ok=True)
 
-        # 2. Создание Shorts
-        output_path = self.output_dir / f"short_{video_id}.mp4"
-        if self._create_short(input_path, output_path):
-            print(f"Готовый Shorts сохранён: {output_path}")
-            return output_path
+# Параметры обработки
+ffmpeg_path = "ffmpeg"  # Убедитесь, что ffmpeg установлен и доступен в PATH
+segment_duration = 60  # Продолжительность сегмента в секундах
+target_width = 1080
+target_height = 1920
+max_duration = 60  # Максимальная длительность видео для Shorts в секундах
 
-        print("Не удалось создать Shorts")
+def download_video(video_url: str) -> Path:
+    """Скачивает видео с YouTube по URL."""
+    ydl_opts = {
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+        'outtmpl': str(download_dir / '%(id)s.%(ext)s'),
+        'quiet': True,
+    }
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(video_url, download=True)
+            return Path(ydl.prepare_filename(info))
+    except Exception as e:
+        logger.error(f"Ошибка при скачивании видео: {e}")
         return None
 
-    def _download_video(self, video_id: str) -> Optional[Path]:
-        """Скачивание видео с YouTube"""
-        import yt_dlp  # Импортируем yt_dlp
-        ydl_opts = {
-            'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
-            'outtmpl': str(self.download_dir / '%(id)s.%(ext)s'),
-            'quiet': True,
-        }
+def split_video(input_path: Path, segment_duration: int) -> list:
+    """Разделяет видео на сегменты."""
+    output_template = str(segments_dir / f"{input_path.stem}-%03d{input_path.suffix}")
+    cmd = [
+        ffmpeg_path,
+        '-i', str(input_path),
+        '-c:v', 'copy',
+        '-c:a', 'copy',
+        '-f', 'segment',
+        '-segment_time', str(segment_duration),
+        '-reset_timestamps', '1',
+        output_template
+    ]
+    try:
+        subprocess.run(cmd, check=True)
+        return list(segments_dir.glob(f"{input_path.stem}-*{input_path.suffix}"))
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Ошибка при разделении видео: {e}")
+        return []
 
-        try:
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                info = ydl.extract_info(f"https://youtu.be/{video_id}", download=True)
-                return Path(ydl.prepare_filename(info))
-        except Exception as e:
-            logger.error(f"Ошибка скачивания: {e}")
-            return None
+def create_short(input_path: Path, output_path: Path) -> bool:
+    """Создает вертикальное видео (9:16) для Shorts."""
+    try:
+        with VideoFileClip(str(input_path)) as clip:
+            original_width, original_height = clip.size
+            fps = clip.fps
 
-    def _create_short(self, input_path: Path, output_path: Path) -> bool:
-        """Создание вертикального Shorts"""
-        try:
-            if not input_path.exists():
-                logger.error(f"Файл {input_path} не найден")
-                return False
+            # Ограничиваем длительность видео
+            if clip.duration > max_duration:
+                clip = clip.subclip(0, max_duration)
 
-            with VideoFileClip(str(input_path)) as clip:
-                # Обрезка до 60 секунд
-                if clip.duration > 60:
-                    clip = clip.subclipped(0, 60)
+            # Масштабируем по высоте и обрезаем по ширине
+            scale_factor = target_height / original_height
+            scaled_width = int(original_width * scale_factor)
+            x_center = scaled_width // 2
+            x1 = x_center - (target_width // 2)
+            x2 = x_center + (target_width // 2)
 
-                # Проверка, если видео уже в формате 9:16, можно пропустить обрезку
-                if clip.size[0] != 1080 or clip.size[1] != 1920:
-                    # Вертикальный формат (9:16) с указанием фильтра ресэмплинга
-                    clip = clip.with_effects([Resize.resizer(height=1920)])
-                    clip = clip.crop(x1=(clip.w - 1080) / 2, width=1080, height=1920)
-                
-                # Экспорт видео
-                clip.write_videofile(
-                    str(output_path),
-                    codec="libx264",
-                    audio_codec="aac",
-                    fps=30,
-                    threads=4,
-                    preset="fast"
-                )
-                return True
-        except Exception as e:
-            logger.error(f"Ошибка обработки видео: {e}")
-            return False
+            final_clip = clip.fx(resize.resize, height=target_height) \
+                               .fx(crop.crop, x1=x1, y1=0, x2=x2, y2=target_height)
+
+            final_clip.write_videofile(
+                str(output_path),
+                codec='libx264',
+                fps=fps,
+                threads=4,
+                preset='fast',
+                audio_codec='aac',
+                ffmpeg_params=['-movflags', '+faststart']
+            )
+        return True
+    except Exception as e:
+        logger.error(f"Ошибка при создании Shorts: {e}")
+        return False
+
+def process_video(video_url: str, split_into_segments: bool = False, segment_duration: int = 60):
+    """Основная функция обработки видео."""
+    input_path = download_video(video_url)
+    if not input_path:
+        logger.error("Не удалось скачать видео.")
+        return
+
+    if split_into_segments:
+        segments = split_video(input_path, segment_duration)
+        for segment in segments:
+            output_path = output_dir / f"short_{segment.stem}.mp4"
+            if create_short(segment, output_path):
+                logger.info(f"Готовый Shorts сохранён: {output_path}")
+    else:
+        output_path = output_dir / f"short_{input_path.stem}.mp4"
+        if create_short(input_path, output_path):
+            logger.info(f"Готовый Shorts сохранён: {output_path}")
+
+# Пример использования
+video_url = 'https://www.youtube.com/watch?v=your_video_id'
+process_video(video_url, split_into_segments=True, segment_duration=60)

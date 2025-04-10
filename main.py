@@ -7,7 +7,7 @@ from youtube_shorts_creator import YouTubeShortsCreator
 
 if __name__ == "__main__":
     creator = YouTubeShortsCreator()
-    result_path = creator.process_video("mPG32p8oEnA")
+    result_path = creator.process_video("uiPM4QToPBA")
     
     if result_path:
         print(f" Готовый Shorts сохранён по пути:\n{result_path}")

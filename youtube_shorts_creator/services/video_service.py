@@ -4,7 +4,7 @@ from typing import Tuple, Optional, List
 from pathlib import Path
 
 try:
-    from moviepy.editor import VideoFileClip
+    from moviepy import VideoFileClip
     import imageio_ffmpeg
     HAS_MOVIEPY = True
 except ImportError:
