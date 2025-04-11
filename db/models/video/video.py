@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy import Column, BigInteger, String, Enum, DateTime, Sequence, Integer, Interval
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import Column, String, Enum, DateTime, Sequence, Integer, Interval, JSON
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
 
 from db.connect.base import Base
 from db.models.comment.comment import Comment
@@ -24,5 +25,8 @@ class Video(Base):
     view_count = Column(Integer)
     like_count = Column(Integer)
     status = Column(Enum(Status), nullable=False)
+    comment_count = Column(Integer)
+    category_id = Column(Integer)
+    tags = Column(JSONB)
 
     comments = relationship(Comment, back_populates="video")

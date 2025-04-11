@@ -1,6 +1,5 @@
 from typing import Optional
 from db.models.video.video import Video
-from db.models.comment.comment import Comment
 
 
 class VideoRepository:
@@ -17,4 +16,8 @@ class VideoRepository:
 
     def get_by_id(self, video_id: int) -> Optional[Video]:
         return self.session.query(Video).filter(Video.id == video_id).first()
+
+    def get_by_id_above(self, video_id: int):
+        return self.session.query(Video).filter(Video.id >= video_id).order_by(Video.id.asc()).all()
+
 

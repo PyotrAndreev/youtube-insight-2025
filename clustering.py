@@ -15,7 +15,11 @@ session = Connect()
 videoRepository = VideoRepository(Connect.session)
 
 video_titles = []
-for i in range(18, 889):
+
+videos = videoRepository.get_by_id_above(0)
+
+for video in videos:
+    i = video.id
     video = videoRepository.get_by_id(i)
     if video is not None:
         video_titles.append(video.title)
