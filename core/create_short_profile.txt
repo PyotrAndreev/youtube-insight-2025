@@ -1,0 +1,635 @@
+         505017 function calls (481555 primitive calls) in 84.998 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      2/1    0.000    0.000   84.557   84.557 core.py:85(create_short)
+      2/1    0.000    0.000   84.526   84.526 <decorator-gen-55>:1(write_videofile)
+   1330/1    0.004    0.000   84.453   84.453 decorators.py:47(requires_duration)
+      2/1    0.000    0.000   84.453   84.453 <decorator-gen-54>:1(write_videofile)
+      3/1    0.000    0.000   84.453   84.453 decorators.py:108(use_clip_fps_by_default)
+      2/1    0.000    0.000   84.453   84.453 <decorator-gen-53>:1(write_videofile)
+        1    0.000    0.000   84.453   84.453 decorators.py:17(convert_masks_to_RGB)
+    13/12    0.000    0.000   60.162    5.013 threading.py:641(wait)
+    13/12    2.208    0.170   58.288    4.857 threading.py:327(wait)
+     1500    0.587    0.000   45.429    0.030 ffmpeg_writer.py:132(write_frame)
+     2824   43.409    0.015   43.409    0.015 {method 'tobytes' of 'numpy.ndarray' objects}
+     1501    0.038    0.000   32.397    0.022 Clip.py:442(iter_frames)
+8657/2827    0.023    0.000   32.269    0.011 <decorator-gen-11>:1(get_frame)
+8658/2827    0.073    0.000   32.262    0.011 decorators.py:78(wrapper)
+8657/2827    0.020    0.000   32.189    0.011 Clip.py:77(get_frame)
+5830/2827    0.019    0.000   32.184    0.011 Clip.py:136(<lambda>)
+3003/1502    0.023    0.000   31.824    0.021 VideoClip.py:490(<lambda>)
+        1    0.002    0.002   24.312   24.312 VideoClip.py:131(write_videofile)
+        1    0.638    0.638   24.309   24.309 ffmpeg_writer.py:199(ffmpeg_write_video)
+     1502    0.614    0.000   21.966    0.015 resize.py:150(<lambda>)
+     1502   10.823    0.007   18.373    0.012 resize.py:8(resizer)
+     2827    0.010    0.000   10.100    0.004 Clip.py:187(<lambda>)
+     1500    0.634    0.000    9.782    0.007 ffmpeg_reader.py:116(read_frame)
+     1503    0.007    0.000    9.705    0.006 VideoFileClip.py:113(<lambda>)
+     1503    0.017    0.000    9.687    0.006 ffmpeg_reader.py:153(get_frame)
+1535/1533    9.387    0.006    9.215    0.006 {method 'read' of '_io.BufferedReader' objects}
+     5653    5.304    0.001    5.304    0.001 {method 'astype' of 'numpy.ndarray' objects}
+     1502    5.244    0.003    5.244    0.003 {resize}
+     2824    2.775    0.001    2.775    0.001 {method 'write' of '_io.BufferedWriter' objects}
+        6    0.000    0.000    1.925    0.321 subprocess.py:1271(wait)
+        6    0.000    0.000    1.925    0.321 subprocess.py:1592(_wait)
+        6    1.925    0.321    1.925    0.321 {built-in method _winapi.WaitForSingleObject}
+        1    0.000    0.000    1.861    1.861 <decorator-gen-45>:1(write_audiofile)
+        1    0.000    0.000    1.861    1.861 AudioClip.py:145(write_audiofile)
+        1    0.000    0.000    1.861    1.861 <decorator-gen-9>:1(ffmpeg_audiowrite)
+        1    0.003    0.003    1.861    1.861 ffmpeg_audiowriter.py:143(ffmpeg_audiowrite)
+        1    0.000    0.000    1.797    1.797 ffmpeg_writer.py:196(__exit__)
+        1    0.000    0.000    1.797    1.797 ffmpeg_writer.py:182(close)
+     1324    0.003    0.000    1.241    0.001 ffmpeg_audiowriter.py:71(write_frames)
+     2834    0.076    0.000    0.585    0.000 proglog.py:240(__call__)
+     2826    0.058    0.000    0.568    0.000 proglog.py:201(new_iterable)
+     1325    0.024    0.000    0.517    0.000 AudioClip.py:64(iter_chunks)
+     1324    0.002    0.000    0.424    0.000 <decorator-gen-44>:1(to_soundarray)
+     1324    0.034    0.000    0.419    0.000 AudioClip.py:88(to_soundarray)
+        1    0.000    0.000    0.388    0.388 VideoFileClip.py:78(__init__)
+     2828    0.012    0.000    0.375    0.000 proglog.py:345(bars_callback)
+     2824    0.017    0.000    0.359    0.000 std.py:1198(update)
+      667    0.007    0.000    0.336    0.001 std.py:1325(refresh)
+     1324    0.002    0.000    0.328    0.000 AudioFileClip.py:77(<lambda>)
+     1324    0.164    0.000    0.326    0.000 readers.py:156(get_frame)
+      669    0.006    0.000    0.312    0.000 std.py:1464(display)
+        1    0.000    0.000    0.258    0.258 ffmpeg_reader.py:28(__init__)
+        2    0.000    0.000    0.206    0.103 ffmpeg_reader.py:229(ffmpeg_parse_infos)
+        2    0.000    0.000    0.186    0.093 subprocess.py:1177(communicate)
+        2    0.000    0.000    0.182    0.091 subprocess.py:1615(_communicate)
+        4    0.000    0.000    0.182    0.046 threading.py:1056(join)
+        4    0.001    0.000    0.182    0.045 {method 'join' of '_thread._ThreadHandle' objects}
+      4/2    0.000    0.000    0.181    0.091 threading.py:998(_bootstrap)
+      4/2    0.007    0.002    0.181    0.091 threading.py:1025(_bootstrap_inner)
+      4/2    0.000    0.000    0.175    0.088 threading.py:981(run)
+    14/12    0.001    0.000    0.175    0.015 {method 'close' of '_io.BufferedReader' objects}
+      4/2    0.000    0.000    0.175    0.087 subprocess.py:1610(_readerthread)
+       25    0.006    0.000    0.159    0.006 readers.py:222(buffer_around)
+      667    0.006    0.000    0.156    0.000 std.py:1150(__str__)
+      669    0.003    0.000    0.149    0.000 std.py:457(print_status)
+      667    0.044    0.000    0.144    0.000 std.py:464(format_meter)
+       25    0.032    0.001    0.134    0.005 readers.py:109(read_chunk)
+        1    0.000    0.000    0.129    0.129 AudioFileClip.py:65(__init__)
+        1    0.000    0.000    0.129    0.129 readers.py:42(__init__)
+      669    0.004    0.000    0.128    0.000 std.py:451(fp_write)
+      685    0.127    0.000    0.127    0.000 {method 'write' of '_io.TextIOWrapper' objects}
+     1342    0.002    0.000    0.124    0.000 utils.py:194(inner)
+    59/50    0.011    0.000    0.118    0.002 {method 'acquire' of '_thread.lock' objects}
+        2    0.000    0.000    0.097    0.049 ffmpeg_audiowriter.py:119(close)
+     2834    0.002    0.000    0.080    0.000 proglog.py:362(callback)
+        6    0.000    0.000    0.079    0.013 std.py:716(write)
+     2003    0.003    0.000    0.076    0.000 utils.py:378(disp_len)
+    35/34    0.000    0.000    0.073    0.002 {built-in method builtins.next}
+       12    0.000    0.000    0.073    0.006 std.py:725(external_write_mode)
+       12    0.000    0.000    0.073    0.006 contextlib.py:136(__enter__)
+       16    0.000    0.000    0.072    0.005 std.py:760(get_lock)
+        1    0.000    0.000    0.072    0.072 std.py:90(__init__)
+        1    0.000    0.000    0.072    0.072 std.py:116(create_mp_lock)
+      7/2    0.000    0.000    0.072    0.036 <frozen importlib._bootstrap>:1349(_find_and_load)
+      7/2    0.000    0.000    0.072    0.036 <frozen importlib._bootstrap>:1304(_find_and_load_unlocked)
+      7/2    0.000    0.000    0.071    0.035 <frozen importlib._bootstrap>:911(_load_unlocked)
+      6/2    0.000    0.000    0.070    0.035 <frozen importlib._bootstrap_external>:1020(exec_module)
+     20/4    0.000    0.000    0.068    0.017 <frozen importlib._bootstrap>:480(_call_with_frames_removed)
+      6/2    0.000    0.000    0.068    0.034 {built-in method builtins.exec}
+     2003    0.004    0.000    0.066    0.000 utils.py:374(_text_width)
+        1    0.000    0.000    0.063    0.063 context.py:70(RLock)
+     2005    0.015    0.000    0.063    0.000 {built-in method builtins.sum}
+        1    0.000    0.000    0.061    0.061 synchronize.py:1(<module>)
+        7    0.000    0.000    0.059    0.008 <frozen importlib._bootstrap>:806(module_from_spec)
+        1    0.000    0.000    0.058    0.058 <frozen importlib._bootstrap_external>:1318(create_module)
+        1    0.058    0.058    0.058    0.058 {built-in method _imp.create_dynamic}
+        4    0.000    0.000    0.052    0.013 Clip.py:95(fl)
+        4    0.000    0.000    0.052    0.013 decorators.py:10(outplace)
+        3    0.000    0.000    0.052    0.017 <decorator-gen-61>:1(set_make_frame)
+        2    0.000    0.000    0.052    0.026 Clip.py:190(fx)
+        2    0.000    0.000    0.052    0.026 VideoClip.py:484(fl_image)
+        3    0.006    0.002    0.052    0.017 VideoClip.py:636(set_make_frame)
+     8661    0.013    0.000    0.052    0.000 tools.py:69(cvsecs)
+   106495    0.031    0.000    0.047    0.000 utils.py:375(<genexpr>)
+        6    0.000    0.000    0.042    0.007 subprocess.py:816(__init__)
+        6    0.000    0.000    0.040    0.007 subprocess.py:1448(_execute_child)
+        6    0.037    0.006    0.037    0.006 {built-in method _winapi.CreateProcess}
+     8662    0.032    0.000    0.036    0.000 tools.py:60(is_string)
+        1    0.000    0.000    0.031    0.031 Clip.py:500(__exit__)
+        1    0.000    0.000    0.031    0.031 VideoFileClip.py:123(close)
+        1    0.000    0.000    0.030    0.030 resize.py:61(resize)
+     1525    0.030    0.000    0.030    0.000 {built-in method numpy.frombuffer}
+     1501    0.025    0.000    0.025    0.000 crop.py:53(<lambda>)
+     2836    0.017    0.000    0.024    0.000 {built-in method builtins.sorted}
+        3    0.001    0.000    0.024    0.008 ffmpeg_reader.py:188(close)
+     3972    0.023    0.000    0.023    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+      667    0.001    0.000    0.023    0.000 utils.py:386(disp_trim)
+        1    0.000    0.000    0.022    0.022 crop.py:1(crop)
+       24    0.019    0.001    0.020    0.001 shape_base.py:220(vstack)
+   104492    0.016    0.000    0.016    0.000 {built-in method unicodedata.east_asian_width}
+     1324    0.002    0.000    0.014    0.000 {method 'any' of 'numpy.ndarray' objects}
+     2827    0.013    0.000    0.013    0.000 Clip.py:389(<lambda>)
+     1336    0.008    0.000    0.013    0.000 {method 'format' of 'str' objects}
+     1324    0.001    0.000    0.012    0.000 _methods.py:58(_any)
+    11668    0.011    0.000    0.011    0.000 {built-in method builtins.hasattr}
+     1326    0.011    0.000    0.011    0.000 {built-in method numpy.arange}
+      689    0.004    0.000    0.011    0.000 std.py:102(acquire)
+     1325    0.002    0.000    0.011    0.000 fromnumeric.py:3618(round)
+     1324    0.002    0.000    0.010    0.000 {method 'min' of 'numpy.ndarray' objects}
+     1334    0.006    0.000    0.009    0.000 utils.py:273(_is_ascii)
+     1332    0.008    0.000    0.009    0.000 std.py:400(format_interval)
+     11/7    0.000    0.000    0.009    0.001 <frozen importlib._bootstrap>:1390(_handle_fromlist)
+      5/2    0.000    0.000    0.008    0.004 {built-in method builtins.__import__}
+     1324    0.001    0.000    0.008    0.000 _methods.py:46(_amin)
+     1325    0.002    0.000    0.008    0.000 fromnumeric.py:51(_wrapfunc)
+    20380    0.008    0.000    0.008    0.000 {built-in method builtins.isinstance}
+     2828    0.006    0.000    0.008    0.000 proglog.py:38(log)
+        6    0.000    0.000    0.008    0.001 <frozen importlib._bootstrap_external>:1093(get_code)
+     3992    0.008    0.000    0.008    0.000 std.py:231(__call__)
+     2834    0.005    0.000    0.008    0.000 proglog.py:242(<lambda>)
+        1    0.000    0.000    0.007    0.007 AudioFileClip.py:86(close)
+        3    0.000    0.000    0.007    0.002 readers.py:147(close_proc)
+    11503    0.007    0.000    0.007    0.000 {method 'items' of 'dict' objects}
+     5130    0.007    0.000    0.007    0.000 {built-in method time.time}
+      667    0.005    0.000    0.007    0.000 std.py:1446(format_dict)
+     1324    0.001    0.000    0.007    0.000 {method 'max' of 'numpy.ndarray' objects}
+      689    0.004    0.000    0.007    0.000 std.py:106(release)
+        1    0.000    0.000    0.006    0.006 __init__.py:1(<module>)
+     2003    0.006    0.000    0.006    0.000 {method 'sub' of 're.Pattern' objects}
+        1    0.000    0.000    0.006    0.006 readers.py:67(initialize)
+        1    0.000    0.000    0.006    0.006 ffmpeg_writer.py:68(__init__)
+        6    0.000    0.000    0.006    0.001 <frozen importlib._bootstrap_external>:1214(get_data)
+     3509    0.006    0.000    0.006    0.000 {method 'update' of 'dict' objects}
+        1    0.000    0.000    0.006    0.006 ffmpeg_audiowriter.py:37(__init__)
+        1    0.000    0.000    0.006    0.006 ffmpeg_reader.py:76(initialize)
+     1325    0.005    0.000    0.005    0.000 {method 'round' of 'numpy.ndarray' objects}
+     1499    0.005    0.000    0.005    0.000 ffmpeg_reader.py:107(skip_frames)
+10152/10132    0.005    0.000    0.005    0.000 {built-in method builtins.len}
+     1324    0.001    0.000    0.005    0.000 _methods.py:42(_amax)
+     1324    0.005    0.000    0.005    0.000 {built-in method numpy.zeros}
+    14145    0.005    0.000    0.005    0.000 proglog.py:148(bars)
+     2836    0.004    0.000    0.004    0.000 {method 'split' of 'str' objects}
+        1    0.000    0.000    0.004    0.004 context.py:1(<module>)
+      667    0.003    0.000    0.004    0.000 std.py:186(__format__)
+        6    0.004    0.001    0.004    0.001 {built-in method _io.open_code}
+      689    0.004    0.000    0.004    0.000 {method 'acquire' of '_multiprocessing.SemLock' objects}
+      665    0.003    0.000    0.003    0.000 {built-in method now}
+        7    0.000    0.000    0.003    0.000 <frozen importlib._bootstrap>:1240(_find_spec)
+      690    0.003    0.000    0.003    0.000 {method 'acquire' of '_thread.RLock' objects}
+    14050    0.003    0.000    0.003    0.000 {built-in method builtins.ord}
+     4683    0.003    0.000    0.003    0.000 {method 'append' of 'list' objects}
+     3050    0.003    0.000    0.003    0.000 {method 'endswith' of 'str' objects}
+      667    0.002    0.000    0.003    0.000 std.py:153(__init__)
+        7    0.000    0.000    0.003    0.000 <frozen importlib._bootstrap_external>:1551(find_spec)
+        7    0.000    0.000    0.003    0.000 <frozen importlib._bootstrap_external>:1522(_get_spec)
+       12    0.000    0.000    0.002    0.000 <frozen importlib._bootstrap_external>:1624(find_spec)
+        2    0.000    0.000    0.002    0.001 proglog.py:173(iter_bar)
+      689    0.002    0.000    0.002    0.000 {method 'release' of '_multiprocessing.SemLock' objects}
+        2    0.000    0.000    0.002    0.001 proglog.py:327(new_tqdm_bar)
+     2828    0.002    0.000    0.002    0.000 proglog.py:161(bar_is_logged)
+     2840    0.002    0.000    0.002    0.000 {method 'pop' of 'dict' objects}
+       10    0.000    0.000    0.002    0.000 __init__.py:330(_compile)
+        2    0.000    0.000    0.002    0.001 std.py:952(__init__)
+        6    0.001    0.000    0.002    0.000 subprocess.py:584(list2cmdline)
+        5    0.000    0.000    0.001    0.000 _compiler.py:743(compile)
+      673    0.001    0.000    0.001    0.000 {method 'flush' of '_io.TextIOWrapper' objects}
+        6    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:782(_compile_bytecode)
+        6    0.001    0.000    0.001    0.000 {built-in method marshal.loads}
+     3331    0.001    0.000    0.001    0.000 {built-in method builtins.divmod}
+        6    0.000    0.000    0.001    0.000 subprocess.py:1347(_get_handles)
+        8    0.000    0.000    0.001    0.000 __init__.py:174(search)
+     1376    0.001    0.000    0.001    0.000 {built-in method builtins.max}
+       29    0.000    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:145(_path_stat)
+       29    0.001    0.000    0.001    0.000 {built-in method nt.stat}
+        2    0.000    0.000    0.001    0.000 subprocess.py:1682(terminate)
+        2    0.001    0.000    0.001    0.000 {built-in method _winapi.TerminateProcess}
+     2830    0.001    0.000    0.001    0.000 proglog.py:153(bar_is_ignored)
+       16    0.000    0.000    0.001    0.000 _monitor.py:47(get_instances)
+      681    0.001    0.000    0.001    0.000 {built-in method builtins.abs}
+       58    0.001    0.000    0.001    0.000 <frozen importlib._bootstrap_external>:101(_path_join)
+       66    0.000    0.000    0.001    0.000 subprocess.py:224(Close)
+     1473    0.001    0.000    0.001    0.000 {built-in method builtins.getattr}
+        5    0.000    0.000    0.001    0.000 _parser.py:970(parse)
+       76    0.000    0.000    0.001    0.000 _weakrefset.py:63(__iter__)
+       42    0.001    0.000    0.001    0.000 {built-in method _winapi.CloseHandle}
+        2    0.000    0.000    0.001    0.000 proglog.py:339(close_tqdm_bar)
+      8/5    0.000    0.000    0.001    0.000 _parser.py:451(_parse_sub)
+        6    0.000    0.000    0.001    0.000 subprocess.py:1294(_close_pipe_fds)
+       16    0.000    0.000    0.001    0.000 _weakrefset.py:95(copy)
+        4    0.000    0.000    0.001    0.000 std.py:1265(close)
+     10/5    0.000    0.000    0.001    0.000 _parser.py:511(_parse)
+       28    0.000    0.000    0.001    0.000 {built-in method builtins.__build_class__}
+       17    0.000    0.000    0.001    0.000 _weakrefset.py:37(__init__)
+        1    0.001    0.001    0.001    0.001 {built-in method nt.remove}
+        5    0.001    0.000    0.001    0.000 {built-in method _thread.start_joinable_thread}
+        5    0.000    0.000    0.001    0.000 _compiler.py:576(_code)
+        2    0.000    0.000    0.001    0.000 __init__.py:270(findall)
+       16    0.000    0.000    0.000    0.000 _weakrefset.py:120(update)
+      690    0.000    0.000    0.000    0.000 {method 'release' of '_thread.RLock' objects}
+        2    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1675(_fill_cache)
+       17    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:304(acquire)
+        5    0.000    0.000    0.000    0.000 threading.py:953(start)
+       12    0.000    0.000    0.000    0.000 {built-in method _winapi.CreatePipe}
+     17/5    0.000    0.000    0.000    0.000 _compiler.py:37(_compile)
+     1325    0.000    0.000    0.000    0.000 fromnumeric.py:3614(_round_dispatcher)
+       12    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:513(cache_from_source)
+        2    0.000    0.000    0.000    0.000 utils.py:297(_screen_shape_windows)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:155(_path_is_mode_type)
+        9    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:164(_path_isfile)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:733(_init_module_attrs)
+        6    0.000    0.000    0.000    0.000 {method '__exit__' of '_io._IOBase' objects}
+        2    0.000    0.000    0.000    0.000 {built-in method nt.listdir}
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:416(__enter__)
+        1    0.000    0.000    0.000    0.000 reduction.py:1(<module>)
+       10    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:463(_lock_unlock_module)
+       42    0.000    0.000    0.000    0.000 _weakrefset.py:27(__exit__)
+        2    0.000    0.000    0.000    0.000 ffmpeg_reader.py:319(get_tbr)
+        1    0.000    0.000    0.000    0.000 <decorator-gen-36>:1(subclip)
+       12    0.000    0.000    0.000    0.000 {built-in method _io.open}
+        6    0.000    0.000    0.000    0.000 subprocess.py:1147(_get_devnull)
+      667    0.000    0.000    0.000    0.000 utils.py:112(__format__)
+        5    0.000    0.000    0.000    0.000 threading.py:869(__init__)
+        6    0.000    0.000    0.000    0.000 contextlib.py:571(__exit__)
+       13    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:632(cached)
+        4    0.000    0.000    0.000    0.000 Clip.py:58(copy)
+        1    0.000    0.000    0.000    0.000 <decorator-gen-35>:1(subclip)
+        1    0.000    0.000    0.000    0.000 decorators.py:24(apply_to_mask)
+        6    0.000    0.000    0.000    0.000 {built-in method nt.open}
+        1    0.000    0.000    0.000    0.000 <decorator-gen-34>:1(subclip)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:642(_get_cached)
+      667    0.000    0.000    0.000    0.000 std.py:167(colour)
+        1    0.000    0.000    0.000    0.000 decorators.py:36(apply_to_audio)
+        2    0.000    0.000    0.000    0.000 Clip.py:354(subclip)
+       10    0.000    0.000    0.000    0.000 copy.py:62(copy)
+        2    0.000    0.000    0.000    0.000 Clip.py:153(fl_time)
+        1    0.000    0.000    0.000    0.000 function_base.py:25(linspace)
+       24    0.000    0.000    0.000    0.000 shape_base.py:80(atleast_2d)
+        1    0.000    0.000    0.000    0.000 process.py:1(<module>)
+       24    0.000    0.000    0.000    0.000 contextlib.py:534(callback)
+       17    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:162(__enter__)
+       42    0.000    0.000    0.000    0.000 _weakrefset.py:53(_commit_removals)
+        2    0.000    0.000    0.000    0.000 std.py:686(_decr_instances)
+       16    0.000    0.000    0.000    0.000 std.py:110(__enter__)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1619(_get_spec)
+      667    0.000    0.000    0.000    0.000 utils.py:108(__init__)
+        5    0.000    0.000    0.000    0.000 threading.py:620(set)
+        5    0.000    0.000    0.000    0.000 _compiler.py:514(_compile_info)
+        2    0.000    0.000    0.000    0.000 std.py:663(__new__)
+       12    0.000    0.000    0.000    0.000 contextlib.py:145(__exit__)
+       14    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1500(_path_importer_cache)
+       25    0.000    0.000    0.000    0.000 {built-in method builtins.round}
+       17    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:124(setdefault)
+        1    0.000    0.000    0.000    0.000 util.py:1(<module>)
+       24    0.000    0.000    0.000    0.000 contextlib.py:481(_exit_wrapper)
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1233(path_stats)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:833(spec_from_file_location)
+        4    0.000    0.000    0.000    0.000 std.py:1286(fp_write)
+       17    0.000    0.000    0.000    0.000 _compiler.py:241(_optimize_charset)
+       24    0.000    0.000    0.000    0.000 shape_base.py:216(_vhstack_dispatcher)
+       16    0.000    0.000    0.000    0.000 std.py:113(__exit__)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1487(_path_hooks)
+       26    0.000    0.000    0.000    0.000 {method 'reshape' of 'numpy.ndarray' objects}
+       17    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:426(_get_module_lock)
+        2    0.000    0.000    0.000    0.000 _local.py:227(__str__)
+       23    0.000    0.000    0.000    0.000 _weakrefset.py:85(add)
+        1    0.000    0.000    0.000    0.000 synchronize.py:193(__init__)
+      667    0.000    0.000    0.000    0.000 std.py:163(colour)
+        1    0.000    0.000    0.000    0.000 synchronize.py:50(__init__)
+        5    0.000    0.000    0.000    0.000 threading.py:428(notify_all)
+      101    0.000    0.000    0.000    0.000 {method 'add' of 'set' objects}
+       18    0.000    0.000    0.000    0.000 subprocess.py:1426(_make_inheritable)
+       12    0.000    0.000    0.000    0.000 contextlib.py:303(helper)
+        2    0.000    0.000    0.000    0.000 std.py:679(_get_free_pos)
+       17    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:372(release)
+        1    0.000    0.000    0.000    0.000 _monitor.py:30(__init__)
+        2    0.000    0.000    0.000    0.000 std.py:1402(set_postfix)
+      114    0.000    0.000    0.000    0.000 _parser.py:167(__getitem__)
+        5    0.000    0.000    0.000    0.000 threading.py:398(notify)
+        1    0.000    0.000    0.000    0.000 _local.py:289(drive)
+       42    0.000    0.000    0.000    0.000 _weakrefset.py:21(__enter__)
+       12    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:137(_path_split)
+       91    0.000    0.000    0.000    0.000 <frozen os>:855(fsdecode)
+        1    0.000    0.000    0.000    0.000 synchronize.py:121(_make_name)
+        2    0.000    0.000    0.000    0.000 __init__.py:49(create_string_buffer)
+        1    0.000    0.000    0.000    0.000 tempfile.py:153(__next__)
+        7    0.000    0.000    0.000    0.000 copy.py:248(_reconstruct)
+        8    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:190(_path_abspath)
+     20/8    0.000    0.000    0.000    0.000 _parser.py:177(getwidth)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1326(exec_module)
+        8    0.000    0.000    0.000    0.000 <frozen abc>:117(__instancecheck__)
+       24    0.000    0.000    0.000    0.000 shape_base.py:208(_arrays_for_stack_dispatcher)
+       83    0.000    0.000    0.000    0.000 _parser.py:260(get)
+       80    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+      217    0.000    0.000    0.000    0.000 {method 'startswith' of 'str' objects}
+      187    0.000    0.000    0.000    0.000 {method 'rstrip' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1716(path_hook_for_FileFinder)
+        5    0.000    0.000    0.000    0.000 enum.py:1603(__and__)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:420(__exit__)
+        8    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:177(_path_isabs)
+        6    0.000    0.000    0.000    0.000 threading.py:592(__init__)
+        2    0.000    0.000    0.000    0.000 utils.py:213(__init__)
+       12    0.000    0.000    0.000    0.000 contextlib.py:108(__init__)
+       64    0.000    0.000    0.000    0.000 {method 'pop' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method _imp.exec_dynamic}
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:697(_classify_pyc)
+        1    0.000    0.000    0.000    0.000 <frozen zipimport>:68(__init__)
+       44    0.000    0.000    0.000    0.000 {method 'remove' of 'set' objects}
+        8    0.000    0.000    0.000    0.000 {built-in method _abc._abc_instancecheck}
+        7    0.000    0.000    0.000    0.000 __init__.py:101(find_spec)
+       38    0.000    0.000    0.000    0.000 __init__.py:23(<genexpr>)
+       19    0.000    0.000    0.000    0.000 {method 'release' of '_thread.lock' objects}
+        5    0.000    0.000    0.000    0.000 proglog.py:410(default_bar_logger)
+        7    0.000    0.000    0.000    0.000 {method '__reduce_ex__' of 'object' objects}
+       18    0.000    0.000    0.000    0.000 {built-in method _winapi.DuplicateHandle}
+        2    0.000    0.000    0.000    0.000 {method 'close' of '_io.BufferedWriter' objects}
+       17    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:74(__new__)
+        1    0.000    0.000    0.000    0.000 {built-in method nt._path_exists}
+        2    0.000    0.000    0.000    0.000 _weakrefset.py:110(remove)
+        1    0.000    0.000    0.000    0.000 tempfile.py:142(rng)
+       95    0.000    0.000    0.000    0.000 {method 'extend' of 'list' objects}
+       18    0.000    0.000    0.000    0.000 threading.py:306(__exit__)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 fromnumeric.py:41(_wrapit)
+      106    0.000    0.000    0.000    0.000 _parser.py:239(__next)
+        6    0.000    0.000    0.000    0.000 {built-in method nt.close}
+       13    0.000    0.000    0.000    0.000 threading.py:315(_acquire_restore)
+       12    0.000    0.000    0.000    0.000 {built-in method msvcrt.open_osfhandle}
+        1    0.000    0.000    0.000    0.000 _local.py:257(_parse_path)
+        6    0.000    0.000    0.000    0.000 {built-in method _winapi.GetExitCodeProcess}
+        1    0.000    0.000    0.000    0.000 <frozen abc>:105(__new__)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:232(__init__)
+       19    0.000    0.000    0.000    0.000 threading.py:303(__enter__)
+        2    0.000    0.000    0.000    0.000 __init__.py:400(__getattr__)
+       24    0.000    0.000    0.000    0.000 contextlib.py:552(_push_exit_callback)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:982(find_spec)
+       17    0.000    0.000    0.000    0.000 _compiler.py:214(_compile_charset)
+       17    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:82(remove)
+       28    0.000    0.000    0.000    0.000 {built-in method __new__ of type object at 0x00007FF8ABE328A0}
+        1    0.000    0.000    0.000    0.000 _local.py:148(__truediv__)
+       18    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:89(_unpack_uint32)
+        6    0.000    0.000    0.000    0.000 config.py:86(get_setting)
+        1    0.000    0.000    0.000    0.000 _abc.py:130(with_segments)
+        1    0.000    0.000    0.000    0.000 _local.py:277(_raw_path)
+       19    0.000    0.000    0.000    0.000 threading.py:318(_is_owned)
+        1    0.000    0.000    0.000    0.000 proglog.py:298(__init__)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.dir}
+        1    0.000    0.000    0.000    0.000 random.py:119(__init__)
+       42    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1226(__exit__)
+       50    0.000    0.000    0.000    0.000 {method 'get' of 'dict' objects}
+       20    0.000    0.000    0.000    0.000 std.py:1157(__hash__)
+       42    0.000    0.000    0.000    0.000 _weakrefset.py:17(__init__)
+        6    0.000    0.000    0.000    0.000 threading.py:281(__init__)
+        8    0.000    0.000    0.000    0.000 {method 'search' of 're.Pattern' objects}
+        4    0.000    0.000    0.000    0.000 threading.py:1047(_delete)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1598(__init__)
+        1    0.000    0.000    0.000    0.000 <decorator-gen-42>:1(iter_frames)
+       40    0.000    0.000    0.000    0.000 _parser.py:175(append)
+       24    0.000    0.000    0.000    0.000 contextlib.py:479(_create_cb_wrapper)
+        6    0.000    0.000    0.000    0.000 subprocess.py:1132(__del__)
+       48    0.000    0.000    0.000    0.000 {built-in method numpy.asanyarray}
+        7    0.000    0.000    0.000    0.000 {built-in method _imp.is_builtin}
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:730(_validate_timestamp_pyc)
+        2    0.000    0.000    0.000    0.000 __init__.py:407(__getitem__)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1128(find_spec)
+       50    0.000    0.000    0.000    0.000 {method 'rpartition' of 'str' objects}
+       14    0.000    0.000    0.000    0.000 _parser.py:448(_uniq)
+       17    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:79(__init__)
+        5    0.000    0.000    0.000    0.000 threading.py:843(_newname)
+       16    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:645(parent)
+        2    0.000    0.000    0.000    0.000 std.py:438(status_printer)
+        1    0.000    0.000    0.000    0.000 <decorator-gen-27>:1(set_make_frame)
+      5/1    0.000    0.000    0.000    0.000 <frozen abc>:121(__subclasscheck__)
+       36    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:139(<genexpr>)
+       40    0.000    0.000    0.000    0.000 _parser.py:163(__len__)
+       56    0.000    0.000    0.000    0.000 _parser.py:255(match)
+        1    0.000    0.000    0.000    0.000 context.py:30(BaseContext)
+        1    0.000    0.000    0.000    0.000 random.py:128(seed)
+       17    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:173(__exit__)
+      114    0.000    0.000    0.000    0.000 {built-in method nt.fspath}
+        6    0.000    0.000    0.000    0.000 contextlib.py:485(__init__)
+        3    0.000    0.000    0.000    0.000 _parser.py:97(closegroup)
+      7/5    0.000    0.000    0.000    0.000 _compiler.py:439(_get_literal_prefix)
+      5/1    0.000    0.000    0.000    0.000 {built-in method _abc._abc_subclasscheck}
+       52    0.000    0.000    0.000    0.000 {built-in method _thread.get_ident}
+        9    0.000    0.000    0.000    0.000 threading.py:1427(current_thread)
+        1    0.000    0.000    0.000    0.000 process.py:71(BaseProcess)
+        1    0.000    0.000    0.000    0.000 <decorator-gen-41>:1(iter_frames)
+       42    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:1222(__enter__)
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:169(_path_isdir)
+       31    0.000    0.000    0.000    0.000 _parser.py:292(tell)
+       48    0.000    0.000    0.000    0.000 {method '__exit__' of '_thread.RLock' objects}
+        2    0.000    0.000    0.000    0.000 utils.py:266(_supports_unicode)
+        6    0.000    0.000    0.000    0.000 subprocess.py:1435(_filter_handle_list)
+        1    0.000    0.000    0.000    0.000 <frozen ntpath>:99(join)
+        1    0.000    0.000    0.000    0.000 _local.py:498(__init__)
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:445(cb)
+       15    0.000    0.000    0.000    0.000 enum.py:1585(_get_value)
+        5    0.000    0.000    0.000    0.000 threading.py:1160(daemon)
+       63    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:491(_verbose_message)
+        1    0.000    0.000    0.000    0.000 <frozen ntpath>:254(basename)
+        2    0.000    0.000    0.000    0.000 functools.py:407(__get__)
+        1    0.000    0.000    0.000    0.000 {built-in method _abc._abc_init}
+       21    0.000    0.000    0.000    0.000 {built-in method _thread.allocate_lock}
+        7    0.000    0.000    0.000    0.000 _compiler.py:401(_simple)
+        4    0.000    0.000    0.000    0.000 utils.py:187(disable_on_exception)
+       65    0.000    0.000    0.000    0.000 {method 'lower' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 weakref.py:104(__init__)
+        2    0.000    0.000    0.000    0.000 {method 'splitlines' of 'str' objects}
+       38    0.000    0.000    0.000    0.000 {method 'append' of 'collections.deque' objects}
+        4    0.000    0.000    0.000    0.000 threading.py:1134(is_alive)
+        1    0.000    0.000    0.000    0.000 random.py:458(choices)
+        1    0.000    0.000    0.000    0.000 <frozen ntpath>:222(split)
+       49    0.000    0.000    0.000    0.000 {method 'find' of 'bytearray' objects}
+       66    0.000    0.000    0.000    0.000 {built-in method _imp.release_lock}
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:674(_check_name_wrapper)
+       14    0.000    0.000    0.000    0.000 threading.py:312(_release_save)
+        7    0.000    0.000    0.000    0.000 copyreg.py:98(__newobj__)
+        1    0.000    0.000    0.000    0.000 proglog.py:121(__init__)
+        1    0.000    0.000    0.000    0.000 _local.py:117(__init__)
+       19    0.000    0.000    0.000    0.000 {method '__enter__' of '_thread.lock' objects}
+        2    0.000    0.000    0.000    0.000 copyreg.py:107(_slotnames)
+        1    0.000    0.000    0.000    0.000 VideoClip.py:77(__init__)
+        1    0.000    0.000    0.000    0.000 process.py:396(__init__)
+        2    0.000    0.000    0.000    0.000 proglog.py:169(iterable_is_too_short)
+       13    0.000    0.000    0.000    0.000 {method 'remove' of 'collections.deque' objects}
+       36    0.000    0.000    0.000    0.000 {method 'partition' of 'str' objects}
+        8    0.000    0.000    0.000    0.000 {built-in method nt._path_splitroot}
+       12    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:67(_relax_case)
+       66    0.000    0.000    0.000    0.000 {built-in method _imp.acquire_lock}
+        1    0.000    0.000    0.000    0.000 <frozen ntpath>:243(splitext)
+       12    0.000    0.000    0.000    0.000 subprocess.py:229(Detach)
+        4    0.000    0.000    0.000    0.000 _weakrefset.py:39(_remove)
+        5    0.000    0.000    0.000    0.000 enum.py:695(__call__)
+        1    0.000    0.000    0.000    0.000 {function Random.seed at 0x000002A03194C540}
+        2    0.000    0.000    0.000    0.000 Clip.py:48(__init__)
+        8    0.000    0.000    0.000    0.000 utils.py:222(__eq__)
+        5    0.000    0.000    0.000    0.000 threading.py:1018(_set_ident)
+       20    0.000    0.000    0.000    0.000 {built-in method builtins.id}
+        1    0.000    0.000    0.000    0.000 reduction.py:33(ForkingPickler)
+       10    0.000    0.000    0.000    0.000 threading.py:1145(daemon)
+       36    0.000    0.000    0.000    0.000 {built-in method _winapi.GetCurrentProcess}
+        1    0.000    0.000    0.000    0.000 AudioClip.py:47(__init__)
+        1    0.000    0.000    0.000    0.000 synchronize.py:46(SemLock)
+        2    0.000    0.000    0.000    0.000 {built-in method builtins.locals}
+        5    0.000    0.000    0.000    0.000 _parser.py:230(__init__)
+        6    0.000    0.000    0.000    0.000 subprocess.py:199(__init__)
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:48(_new_module)
+       16    0.000    0.000    0.000    0.000 {method 'replace' of 'str' objects}
+       27    0.000    0.000    0.000    0.000 {method 'rfind' of 'str' objects}
+       24    0.000    0.000    0.000    0.000 {method 'pop' of 'collections.deque' objects}
+        6    0.000    0.000    0.000    0.000 {built-in method msvcrt.get_osfhandle}
+        5    0.000    0.000    0.000    0.000 threading.py:1022(_set_native_id)
+        8    0.000    0.000    0.000    0.000 tools.py:100(<genexpr>)
+        2    0.000    0.000    0.000    0.000 {method 'findall' of 're.Pattern' objects}
+        5    0.000    0.000    0.000    0.000 threading.py:1265(_make_invoke_excepthook)
+        2    0.000    0.000    0.000    0.000 utils.py:125(__eq__)
+       39    0.000    0.000    0.000    0.000 {built-in method builtins.min}
+        3    0.000    0.000    0.000    0.000 _parser.py:85(opengroup)
+       17    0.000    0.000    0.000    0.000 {method 'remove' of 'list' objects}
+        7    0.000    0.000    0.000    0.000 {built-in method _imp.find_frozen}
+       14    0.000    0.000    0.000    0.000 {built-in method fromkeys}
+        8    0.000    0.000    0.000    0.000 {built-in method sys.audit}
+        1    0.000    0.000    0.000    0.000 <frozen genericpath>:157(_splitext)
+        2    0.000    0.000    0.000    0.000 utils.py:156(__init__)
+       16    0.000    0.000    0.000    0.000 _parser.py:82(groups)
+        1    0.000    0.000    0.000    0.000 numerictypes.py:471(issubdtype)
+        4    0.000    0.000    0.000    0.000 {built-in method _weakref.proxy}
+        2    0.000    0.000    0.000    0.000 utils.py:252(_is_utf)
+        2    0.000    0.000    0.000    0.000 {built-in method fromtimestamp}
+        2    0.000    0.000    0.000    0.000 {method 'decode' of 'bytes' objects}
+       17    0.000    0.000    0.000    0.000 {built-in method _weakref._remove_dead_weakref}
+        1    0.000    0.000    0.000    0.000 {built-in method nt.urandom}
+        4    0.000    0.000    0.000    0.000 std.py:1428(<genexpr>)
+       14    0.000    0.000    0.000    0.000 plugins.py:149(find_spec)
+        1    0.000    0.000    0.000    0.000 <frozen ntpath>:573(abspath)
+        6    0.000    0.000    0.000    0.000 utils.py:152(wrapper_setattr)
+       35    0.000    0.000    0.000    0.000 threading.py:605(is_set)
+        7    0.000    0.000    0.000    0.000 {built-in method builtins.setattr}
+        2    0.000    0.000    0.000    0.000 {method 'as_arrays' of 'numpy._core._multiarray_umath._array_converter' objects}
+        1    0.000    0.000    0.000    0.000 synchronize.py:370(Barrier)
+       18    0.000    0.000    0.000    0.000 {method '__exit__' of '_thread.lock' objects}
+        2    0.000    0.000    0.000    0.000 {built-in method _struct.unpack}
+        1    0.000    0.000    0.000    0.000 _local.py:505(__new__)
+        1    0.000    0.000    0.000    0.000 tools.py:164(find_extension)
+        1    0.000    0.000    0.000    0.000 ffmpeg_audiowriter.py:130(__del__)
+        5    0.000    0.000    0.000    0.000 {built-in method _sre.compile}
+        5    0.000    0.000    0.000    0.000 _parser.py:954(fix_flags)
+       18    0.000    0.000    0.000    0.000 {built-in method from_bytes}
+       10    0.000    0.000    0.000    0.000 _compiler.py:573(isstring)
+        1    0.000    0.000    0.000    0.000 weakref.py:289(update)
+        1    0.000    0.000    0.000    0.000 <decorator-gen-43>:1(iter_chunks)
+        5    0.000    0.000    0.000    0.000 enum.py:1152(__new__)
+       19    0.000    0.000    0.000    0.000 _parser.py:112(__init__)
+        8    0.000    0.000    0.000    0.000 {method 'keys' of 'dict' objects}
+        6    0.000    0.000    0.000    0.000 {built-in method sys.exception}
+        4    0.000    0.000    0.000    0.000 std.py:1153(_comparable)
+       24    0.000    0.000    0.000    0.000 multiarray.py:180(concatenate)
+        1    0.000    0.000    0.000    0.000 _local.py:237(_format_parsed_parts)
+        1    0.000    0.000    0.000    0.000 {method 'result_type' of 'numpy._core._multiarray_umath._array_converter' objects}
+        8    0.000    0.000    0.000    0.000 {built-in method builtins.globals}
+        3    0.000    0.000    0.000    0.000 _compiler.py:410(_generate_overlap_table)
+        1    0.000    0.000    0.000    0.000 synchronize.py:217(Condition)
+        5    0.000    0.000    0.000    0.000 {built-in method nt._path_splitroot_ex}
+        6    0.000    0.000    0.000    0.000 {method 'setter' of 'property' objects}
+        5    0.000    0.000    0.000    0.000 reduction.py:43(register)
+        2    0.000    0.000    0.000    0.000 _compiler.py:470(_get_charset_prefix)
+       24    0.000    0.000    0.000    0.000 shape_base.py:76(_atleast_2d_dispatcher)
+       17    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:158(__init__)
+        2    0.000    0.000    0.000    0.000 _parser.py:371(_escape)
+        1    0.000    0.000    0.000    0.000 proglog.py:29(__init__)
+        1    0.000    0.000    0.000    0.000 context.py:220(Process)
+        6    0.000    0.000    0.000    0.000 std.py:226(__init__)
+        1    0.000    0.000    0.000    0.000 readers.py:252(__del__)
+       12    0.000    0.000    0.000    0.000 subprocess.py:1323(_on_error_fd_closer)
+        6    0.000    0.000    0.000    0.000 {built-in method _imp._fix_co_filename}
+        2    0.000    0.000    0.000    0.000 std.py:1147(__del__)
+        2    0.000    0.000    0.000    0.000 {method 'count' of 'list' objects}
+       10    0.000    0.000    0.000    0.000 {built-in method builtins.issubclass}
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:599(__init__)
+        1    0.000    0.000    0.000    0.000 ffmpeg_reader.py:198(__del__)
+        1    0.000    0.000    0.000    0.000 readers.py:128(seek)
+        1    0.000    0.000    0.000    0.000 util.py:174(Finalize)
+        1    0.000    0.000    0.000    0.000 context.py:332(SpawnProcess)
+        6    0.000    0.000    0.000    0.000 {method 'start' of 're.Match' objects}
+        4    0.000    0.000    0.000    0.000 {method 'discard' of 'set' objects}
+        1    0.000    0.000    0.000    0.000 reduction.py:251(AbstractReducer)
+        5    0.000    0.000    0.000    0.000 _parser.py:76(__init__)
+        2    0.000    0.000    0.000    0.000 utils.py:139(__getattr__)
+        1    0.000    0.000    0.000    0.000 {built-in method nt._getfullpathname}
+        2    0.000    0.000    0.000    0.000 {built-in method sys.intern}
+        8    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1604(<genexpr>)
+        6    0.000    0.000    0.000    0.000 _compiler.py:31(_combine_flags)
+        6    0.000    0.000    0.000    0.000 subprocess.py:1575(_internal_poll)
+        1    0.000    0.000    0.000    0.000 _monitor.py:94(report)
+        1    0.000    0.000    0.000    0.000 context.py:230(DefaultContext)
+        2    0.000    0.000    0.000    0.000 {method 'encode' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 {method 'popitem' of 'dict' objects}
+        2    0.000    0.000    0.000    0.000 {built-in method atexit.register}
+        1    0.000    0.000    0.000    0.000 {built-in method nt.getcwd}
+        5    0.000    0.000    0.000    0.000 {built-in method _thread.get_native_id}
+        1    0.000    0.000    0.000    0.000 synchronize.py:328(Event)
+        2    0.000    0.000    0.000    0.000 {method 'wrap' of 'numpy._core._multiarray_umath._array_converter' objects}
+        7    0.000    0.000    0.000    0.000 _parser.py:171(__setitem__)
+        2    0.000    0.000    0.000    0.000 utils.py:282(_screen_shape_wrapper)
+        5    0.000    0.000    0.000    0.000 {built-in method _thread.daemon_threads_allowed}
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1184(__init__)
+       10    0.000    0.000    0.000    0.000 {built-in method builtins.iter}
+        2    0.000    0.000    0.000    0.000 numerictypes.py:289(issubclass_)
+        1    0.000    0.000    0.000    0.000 reduction.py:104(DupHandle)
+        9    0.000    0.000    0.000    0.000 _compiler.py:431(_get_iscased)
+        6    0.000    0.000    0.000    0.000 subprocess.py:1251(_remaining_time)
+        6    0.000    0.000    0.000    0.000 subprocess.py:265(_cleanup)
+        1    0.000    0.000    0.000    0.000 numeric.py:1927(isscalar)
+        8    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:653(has_location)
+        1    0.000    0.000    0.000    0.000 synchronize.py:90(_make_methods)
+        1    0.000    0.000    0.000    0.000 synchronize.py:130(Semaphore)
+        1    0.000    0.000    0.000    0.000 process.py:361(_ParentProcess)
+        1    0.000    0.000    0.000    0.000 context.py:203(reducer)
+        8    0.000    0.000    0.000    0.000 {method 'random' of '_random.Random' objects}
+        6    0.000    0.000    0.000    0.000 {method 'end' of 're.Match' objects}
+        2    0.000    0.000    0.000    0.000 proglog.py:14(troncate_string)
+        1    0.000    0.000    0.000    0.000 fromnumeric.py:3523(ndim)
+        4    0.000    0.000    0.000    0.000 {method 'keys' of 'collections.OrderedDict' objects}
+        2    0.000    0.000    0.000    0.000 {method 'strip' of 'str' objects}
+        7    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap>:412(__init__)
+        1    0.000    0.000    0.000    0.000 util.py:360(ForkAwareThreadLock)
+        1    0.000    0.000    0.000    0.000 <frozen ntpath>:34(_get_bothseps)
+        1    0.000    0.000    0.000    0.000 <frozen ntpath>:146(splitdrive)
+        6    0.000    0.000    0.000    0.000 contextlib.py:568(__enter__)
+        1    0.000    0.000    0.000    0.000 context.py:237(get_context)
+        1    0.000    0.000    0.000    0.000 reduction.py:211(_C)
+        8    0.000    0.000    0.000    0.000 {built-in method math.floor}
+        4    0.000    0.000    0.000    0.000 {method 'is_done' of '_thread._ThreadHandle' objects}
+        2    0.000    0.000    0.000    0.000 {method 'difference' of 'set' objects}
+        2    0.000    0.000    0.000    0.000 {method 'get' of 'mappingproxy' objects}
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1017(create_module)
+        1    0.000    0.000    0.000    0.000 synchronize.py:191(RLock)
+        1    0.000    0.000    0.000    0.000 synchronize.py:166(Lock)
+        1    0.000    0.000    0.000    0.000 synchronize.py:149(BoundedSemaphore)
+        1    0.000    0.000    0.000    0.000 util.py:104(_platform_supports_abstract_sockets)
+        1    0.000    0.000    0.000    0.000 {built-in method nt._path_normpath}
+        6    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1209(get_filename)
+        1    0.000    0.000    0.000    0.000 process.py:346(AuthenticationString)
+        1    0.000    0.000    0.000    0.000 context.py:233(__init__)
+        1    0.000    0.000    0.000    0.000 util.py:377(ForkAwareLocal)
+        1    0.000    0.000    0.000    0.000 process.py:394(_MainProcess)
+        1    0.000    0.000    0.000    0.000 context.py:197(get_start_method)
+        1    0.000    0.000    0.000    0.000 {built-in method _operator.index}
+        1    0.000    0.000    0.000    0.000 function_base.py:20(_linspace_dispatcher)
+        3    0.000    0.000    0.000    0.000 copy.py:103(_copy_immutable)
+        1    0.000    0.000    0.000    0.000 context.py:14(ProcessError)
+        1    0.000    0.000    0.000    0.000 context.py:344(SpawnContext)
+        1    0.000    0.000    0.000    0.000 {built-in method nt.getpid}
+        1    0.000    0.000    0.000    0.000 <frozen importlib._bootstrap_external>:1307(__init__)
+        1    0.000    0.000    0.000    0.000 _local.py:307(_tail)
+        1    0.000    0.000    0.000    0.000 Clip.py:295(set_make_frame)
+        2    0.000    0.000    0.000    0.000 _parser.py:165(__delitem__)
+        2    0.000    0.000    0.000    0.000 decorators.py:112(fun)
+        2    0.000    0.000    0.000    0.000 __init__.py:108(<lambda>)
+        1    0.000    0.000    0.000    0.000 process.py:37(current_process)
+        1    0.000    0.000    0.000    0.000 ffmpeg_writer.py:193(__enter__)
+        1    0.000    0.000    0.000    0.000 context.py:17(BufferTooShort)
+        1    0.000    0.000    0.000    0.000 util.py:48(debug)
+        1    0.000    0.000    0.000    0.000 _local.py:298(root)
+        1    0.000    0.000    0.000    0.000 Clip.py:497(__enter__)
+        1    0.000    0.000    0.000    0.000 context.py:23(AuthenticationError)
+        1    0.000    0.000    0.000    0.000 context.py:20(TimeoutError)
+        1    0.000    0.000    0.000    0.000 fromnumeric.py:3519(_ndim_dispatcher)
+
+
