@@ -83,28 +83,37 @@ class VideoCutter:
             return []
 
     def create_short(self, input_path: Path, output_name: str = None) -> Optional[Path]:
-        """Создает вертикальное видео для Shorts."""
+        """Создает вертикальное видео Shorts с горизонтальным контентом и черными полосами."""
         if not output_name:
             output_name = f"short_{input_path.stem}.mp4"
             
         output_path = self.output_dir / output_name
-        
+
         try:
             with VideoFileClip(str(input_path)) as clip:
                 # Ограничиваем длительность
                 if clip.duration > self.max_duration:
                     clip = clip.subclip(0, self.max_duration)
-                
-                # Масштабируем и обрезаем
-                scale_factor = self.target_height / clip.size[1]
-                scaled_width = int(clip.size[0] * scale_factor)
-                x_center = scaled_width // 2
-                x1 = x_center - (self.target_width // 2)
-                x2 = x_center + (self.target_width // 2)
-                
-                final_clip = clip.fx(resize.resize, height=self.target_height) \
-                                 .fx(crop.crop, x1=x1, y1=0, x2=x2, y2=self.target_height)
-                
+
+                # Масштабируем по ширине (чтобы занять всю ширину 1080)
+                scale_factor = self.target_width / clip.size[0]
+                new_height = int(clip.size[1] * scale_factor)
+
+                resized_clip = clip.fx(resize.resize, width=self.target_width)
+
+                # Добавим черные полосы сверху и снизу
+                top_padding = (self.target_height - new_height) // 2
+                bottom_padding = self.target_height - new_height - top_padding
+
+                final_clip = resized_clip.margin(
+                    top=top_padding,
+                    bottom=bottom_padding,
+                    opacity=0,  # 0 = черный фон
+                    color=(0, 0, 0)
+                )
+
+                final_clip = final_clip.set_position("center")
+
                 final_clip.write_videofile(
                     str(output_path),
                     codec='libx264',
@@ -114,10 +123,12 @@ class VideoCutter:
                     audio_codec='aac',
                     ffmpeg_params=['-movflags', '+faststart']
                 )
-            return True
+
+            return output_path
+
         except Exception as e:
             self.logger.error(f"Ошибка при создании Shorts: {e}")
-            return False
+            return None
 
     def process_video(
         self,

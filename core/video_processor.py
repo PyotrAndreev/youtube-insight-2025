@@ -2,8 +2,8 @@ from transcription.service import TranscriptService
 from core import VideoCutter
 from transcription.saver import TranscriptionSaver
 from typing import List, Optional, Dict
-from gpt_service import GPTService
-
+from gpt_service import GPTServiceOllama
+from transcription.service import TranscriptService
 
 import sys
 import os
@@ -102,7 +102,7 @@ def main():
     # Укажите ваш API-ключ для OpenAI
     gpt_api_key = os.environ.get("OPENAI_API_KEY")
     # Инициализируем GPT-сервис
-    gpt_service = GPTService(api_key=gpt_api_key)
+    gpt_service = GPTServiceOllama()
     
     # Создаем процессор видео
     processor = VideoProcessor(video_url, gpt_service)
