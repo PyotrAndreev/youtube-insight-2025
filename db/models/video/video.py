@@ -28,5 +28,7 @@ class Video(Base):
     comment_count = Column(Integer)
     category_id = Column(Integer)
     tags = Column(JSONB)
+    subscribers_count = Column(Integer)
+    manual_category = Column(String)
 
     comments = relationship(Comment, back_populates="video")

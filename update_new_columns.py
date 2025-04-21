@@ -1,12 +1,52 @@
 from googleapiclient.discovery import build
-from datetime import timedelta
-import isodate  # pip install isodate
 
 from db.connect.connect import Connect
 from db.repository.VideoRepository import VideoRepository
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+API_KEY = os.getenv("YOUTUBE_API_KEY")
+
 session = Connect()
 videoRepository = VideoRepository(Connect.session)
+
+def get_channel_stats(api_key, channel_title):
+    youtube = build('youtube', 'v3', developerKey=api_key)
+    channel_name = channel_title
+
+    # Запрос к API
+    request = youtube.search().list(
+        q=channel_name,  # Поисковый запрос (название канала)
+        part="id,snippet",  # Какие данные возвращать
+        type="channel",  # Ищем только каналы
+        maxResults=1  # Максимум результатов (1 - самый релевантный)
+    )
+
+    # Выполняем запрос
+    response = request.execute()
+
+    channel_id = response["items"][0]["id"]["channelId"]
+    print(f"ID канала '{channel_name}': {channel_id}")
+
+    request = youtube.channels().list(
+        part='statistics',
+        id=channel_id
+    )
+    response = request.execute()
+
+    if not response['items']:
+        return None
+
+    stats = response['items'][0]['statistics']
+    print(int(stats.get('subscriberCount', 0)))
+    return {
+        'subscribers_count': int(stats.get('subscriberCount', 0)),
+        'views': int(stats.get('viewCount', 0)),
+        'videos': int(stats.get('videoCount', 0))
+    }
 
 def get_video_info(video_id, api_key):
     """
@@ -25,12 +65,14 @@ def get_video_info(video_id, api_key):
         return None
 
     video_item = video_response['items'][0]
+    print(video_item['statistics'].get('subscriberCount'))
 
     # Парсим информацию о видео
     video_info = {
-        'comment_count': int(video_item['statistics']['commentCount']),
+        'subscribers_count': int(video_item['statistics'].get('subscriberCount', 0))
+        #'comment_count': int(video_item['statistics']['commentCount']),
         #'tags': video_item['snippet']['tags'],
-        'category': video_item['snippet']['categoryId'],
+        #'category': video_item['snippet']['categoryId'],
 
     }
 
@@ -42,24 +84,23 @@ def get_video_info(video_id, api_key):
 def print_video_info(video_data, id):
     """Выводит информацию о видео и комментарии"""
     video = videoRepository.get_by_id(id)
-    print(f"Количество комментариев: {video_data['comment_count']}")
-    #print(f"Тэги: {video_data['tags']}")
-    print(f"Категории: {video_data['category']}")
-    video.comment_count = video_data['comment_count']
+    #print(f"Количество комментариев: {video_data['comment_count']}")
+    print(int(video_data.get('subscribers_count', 0)))
+    #print(f"Категории: {video_data['category']}")
+    #video.comment_count = video_data['comment_count']
+    video.subscribers_count = video_data['subscribers_count']
     '''tags = video_data['tags']
     tags_encoded = []
     for tag in tags:
         tags_encoded.append(tag.encode("utf-8").decode("utf-8"))
     video.tags = tags_encoded'''
-    video.category_id = video_data['category']
-    print(id)
+    #video.category_id = video_data['category']
+    #print(id)
     videoRepository.save(video)
 
 
 
 
-API_KEY = "AIzaSyBORP6ILds3WrN7bBDksTlh5iiEKJUgwyY"  # Замените на ваш ключ
-VIDEO_ID = "Jbx9TCy0qZo"  # Пример ID видео
 
 videos = videoRepository.get_by_id_above(0)
 
@@ -67,11 +108,14 @@ for video in videos:
     i = video.id
     video = videoRepository.get_by_id(i)
     try:
-        video_data = get_video_info(video.youtube_id, API_KEY)
-        if video_data:
-            print_video_info(video_data, i)
-        else:
-            print("Видео не найдено.")
+        #video_data = get_video_info(video.youtube_id, API_KEY)
+        channel_data = get_channel_stats(API_KEY, video.channel_title)
+        print_video_info(channel_data, i)
+
+    #if video_data:
+     #   print_video_info(video_data, i)
+    #else:
+     #   print("Видео не найдено.")
 
     except Exception as e:
         print(f"Произошла ошибка: {str(e)}")

@@ -7,6 +7,7 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import mplcursors
 from collections import Counter
+import re
 
 from db.connect.connect import Connect
 from db.repository.VideoRepository import VideoRepository
@@ -26,19 +27,29 @@ for video in videos:
 
 nltk.download('punkt')
 nltk.download('stopwords')
-stop_words = set(stopwords.words('english'))
+stop_words = set(stopwords.words('russian'))
 
 def clean_text(text):
+    # Удаляем отдельно цифры
+    text = re.sub(r'\b\d+\b', '', text)
+
+    # Удаляем хэштеги (включая кириллические)
+    text = re.sub(r'#[\wа-яА-ЯёЁ]+', '', text)
+
+    # Удаляем специальные символы и лишние пробелы
+    text = re.sub(r'[^\w\s]', ' ', text)
+    text = re.sub(r'\s+', ' ', text).strip()
+
     tokens = word_tokenize(text.lower())
     tokens = [word for word in tokens if word.isalnum() and word not in stop_words]
     return " ".join(tokens)
 
 cleaned_titles = [clean_text(title) for title in video_titles]
 
-model = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 embeddings = model.encode(cleaned_titles)
 
-num_clusters = 6
+num_clusters = 10
 kmeans = KMeans(n_clusters=num_clusters, random_state=42)
 clusters = kmeans.fit_predict(embeddings)
 
@@ -56,7 +67,7 @@ for i in range(num_clusters):
     description = f"Cluster {i}: {', '.join(keywords)}"
     cluster_descriptions.append(description)
 
-tsne = TSNE(n_components=2, random_state=42, perplexity=4)
+tsne = TSNE(n_components=2, random_state=42, perplexity=9)
 embeddings_2d = tsne.fit_transform(embeddings)
 
 cluster_centers = kmeans.cluster_centers_
@@ -71,7 +82,7 @@ legend_elements = []
 for i, desc in enumerate(cluster_descriptions):
     legend_elements.append(plt.Line2D([0], [0], marker='o', color='w',
                                     label=desc,
-                                    markerfacecolor=plt.cm.viridis(i/num_clusters),
+                                    markerfacecolor=plt.cm.viridis(i/(num_clusters-1)),
                                     markersize=10))
 
 first_legend = plt.legend(handles=legend_elements, title="Cluster Descriptions",

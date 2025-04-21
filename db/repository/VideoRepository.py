@@ -20,4 +20,8 @@ class VideoRepository:
     def get_by_id_above(self, video_id: int):
         return self.session.query(Video).filter(Video.id >= video_id).order_by(Video.id.asc()).all()
 
+    def get_by_id_category(self, category_id: int):
+        if category_id == -1:
+            return self.session.query(Video).filter(Video.id >= 0).order_by(Video.id.asc()).all()
+        return self.session.query(Video).filter(Video.category_id == category_id).order_by(Video.id.asc()).all()
 
