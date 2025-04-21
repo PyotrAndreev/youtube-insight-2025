@@ -82,7 +82,8 @@ class VideoCutter:
             self.logger.error(f"Ошибка при разделении видео: {e}")
             return []
 
-    def create_short(self, input_path: Path, output_name: str = None) -> Optional[Path]:
+    def create_short(self, input_path: Path, output_name: str = None, 
+                     start_time: float = 0, end_time: Optional[float] = None) -> Optional[Path]:
         """Создает вертикальное видео Shorts с горизонтальным контентом и черными полосами."""
         if not output_name:
             output_name = f"short_{input_path.stem}.mp4"
@@ -91,6 +92,10 @@ class VideoCutter:
 
         try:
             with VideoFileClip(str(input_path)) as clip:
+                if end_time is not None:
+                    clip = clip.subclip(start_time, end_time)
+                else:
+                    clip = clip.subclip(start_time, start_time + self.max_duration)
                 # Ограничиваем длительность
                 if clip.duration > self.max_duration:
                     clip = clip.subclip(0, self.max_duration)
