@@ -1,54 +1,64 @@
-import subprocess
+import asyncio
 import re
 from typing import List, Dict
 
 class GPTServiceOllama:
     def __init__(self, model: str = "llama3"):
         self.model = model
+        self.semaphore = asyncio.Semaphore(3)
 
-    def extract_timecodes(self, transcript_text: str) -> List[Dict]:
+    async def _call_ollama(self, prompt: str) -> str:
+        cmd = [
+            "ollama", "run", self.model,
+        ]
+
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdin=asyncio.subprocess.PIPE,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+
+        stdout, stderr = await process.communicate(input=prompt.encode())
+
+        if stderr:
+            print(f"Ошибка Ollama: {stderr.decode()}")
+
+        return stdout.decode()
+
+    async def _limited_call(self, prompt: str) -> str:
+        async with self.semaphore:
+            return await self._call_ollama(prompt)
+
+    async def extract_timecodes(self, transcript_text: str) -> List[Dict]:
         parts = self.split_transcript(transcript_text)
+        tasks = []
 
-        timecodes = []
         for part in parts:
             prompt = self._build_prompt(part)
-            try:
-                print(f"Обрабатываем часть текста (длина: {len(part)} символов)...")
-                result = subprocess.run(
-                    ["ollama", "run", self.model],
-                    input=prompt.encode("utf-8"),
-                    capture_output=True,
-                    timeout=360
-                )
-                content = result.stdout.decode("utf-8")
-                print(f"Ответ от Ollama: {content[:500]}...")
-                timecodes.extend(self._parse_timecodes(content))
-            except subprocess.TimeoutExpired:
-                print("[Ollama] Превышено время ожидания.")
-            except subprocess.CalledProcessError as e:
-                print(f"[Ollama] Ошибка в процессе: {e}")
-            except Exception as e:
-                print(f"[Ollama] Ошибка: {e}")
+            tasks.append(self._limited_call(prompt))
+
+        responses = await asyncio.gather(*tasks)
+
+        timecodes = []
+        for response in responses:
+            timecodes.extend(self._parse_timecodes(response))
+
         return timecodes
+
+    def split_transcript(self, transcript: str, max_length: int = 2000) -> List[str]:
+        return [transcript[i:i + max_length] for i in range(0, len(transcript), max_length)]
 
     def _build_prompt(self, transcript_text: str) -> str:
         return (
             "Ты — эксперт по созданию вирусных YouTube Shorts.\n"
-            "фраза должна быть завершенной"
-            "Проанализируй транскрипт видео и найди самые вовлекающие и интересные моменты, "
-            "которые можно вырезать как отдельные шортсы.\n\n"
-            "Критерии отбора:\n"
-            "- Длительность от 30 до 60 секунд\n"
-            "- Вовлечённость: эмоции, юмор, резонансные темы, неожиданные повороты, сильные высказывания\n"
-            "- Самодостаточность: каждый момент должен быть логически завершённым и понятным без контекста\n\n"
-            "Формат вывода строго такой:\n"
+            "Проанализируй транскрипт видео и найди самые вовлекающие моменты.\n"
+            "Формат вывода:\n"
             "00:30 - 01:00 Шокирующее признание\n"
-            "01:10 - 01:50 Смешной момент с реакцией\n"
-            "02:00 - 02:45 Сильная мотивационная речь\n\n"
-            "Вот транскрипт видео:\n\n"
+            "01:10 - 01:50 Смешной момент\n\n"
+            "Вот транскрипт:\n\n"
             f"{transcript_text}"
         )
-
 
     def _parse_timecodes(self, gpt_response: str) -> List[Dict]:
         timecodes = []
@@ -63,6 +73,3 @@ class GPTServiceOllama:
                     "text": text.strip()
                 })
         return timecodes
-
-    def split_transcript(self, transcript: str, max_length: int = 2000) -> List[str]:
-        return [transcript[i:i + max_length] for i in range(0, len(transcript), max_length)]
