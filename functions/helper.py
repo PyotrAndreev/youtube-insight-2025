@@ -38,7 +38,7 @@ def print_categories():
         if categories[i] != 'None':
             print(f'{i}: {categories[i]}')
 
-print_categories()
+#print_categories()
 
 def get_video_info_by_category():
     info_about_video = []

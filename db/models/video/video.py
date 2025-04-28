@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, String, Enum, DateTime, Sequence, Integer, Interval, JSON
+from sqlalchemy import Column, String, Enum, DateTime, Sequence, Integer, Interval, JSON, ForeignKey
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
@@ -27,8 +27,10 @@ class Video(Base):
     status = Column(Enum(Status), nullable=False)
     comment_count = Column(Integer)
     category_id = Column(Integer)
-    tags = Column(JSONB)
-    subscribers_count = Column(Integer)
     manual_category = Column(String)
+    tags = Column(JSONB)
 
+    channel_id = Column(Integer, ForeignKey("channels.id"))
     comments = relationship(Comment, back_populates="video")
+
+    channel = relationship('Channel', back_populates='videos')

@@ -1,6 +1,8 @@
 from googleapiclient.discovery import build
 
 from db.connect.connect import Connect
+from db.models.channel.channel import Channel
+from db.repository.ChannelRepository import ChannelRepository
 from db.repository.VideoRepository import VideoRepository
 
 from dotenv import load_dotenv
@@ -12,40 +14,54 @@ API_KEY = os.getenv("YOUTUBE_API_KEY")
 
 session = Connect()
 videoRepository = VideoRepository(Connect.session)
+channelRepository = ChannelRepository(Connect.session)
 
-def get_channel_stats(api_key, channel_title):
+def get_channel_stats(api_key, channel_id):
     youtube = build('youtube', 'v3', developerKey=api_key)
-    channel_name = channel_title
+    '''channel_name = channel_title
 
     # Запрос к API
     request = youtube.search().list(
-        q=channel_name,  # Поисковый запрос (название канала)
-        part="id,snippet",  # Какие данные возвращать
-        type="channel",  # Ищем только каналы
-        maxResults=1  # Максимум результатов (1 - самый релевантный)
+        q=channel_name, 
+        part="id,snippet",  
+        type="channel",
+        maxResults=1 
     )
 
     # Выполняем запрос
     response = request.execute()
 
-    channel_id = response["items"][0]["id"]["channelId"]
-    print(f"ID канала '{channel_name}': {channel_id}")
+    print(response)
+    print(channel_name)
+    print(response["items"])
+    if len(response["items"]) != 0:
+        channel_id = response["items"][0]["id"]["channelId"]
+        print(f"ID канала '{channel_name}': {channel_id}")
+    '''
 
+    print(channel_id)
     request = youtube.channels().list(
         part='statistics',
         id=channel_id
     )
     response = request.execute()
+    print(response)
 
-    if not response['items']:
-        return None
+    if not response.get('items'):
+        return {
+        'subscribers_count': None,
+        'view_count': None,
+        'video_count': None
+    }
 
+
+    print(response["items"][0]['statistics'])
     stats = response['items'][0]['statistics']
     print(int(stats.get('subscriberCount', 0)))
     return {
         'subscribers_count': int(stats.get('subscriberCount', 0)),
-        'views': int(stats.get('viewCount', 0)),
-        'videos': int(stats.get('videoCount', 0))
+        'view_count': int(stats.get('viewCount', 0)),
+        'video_count': int(stats.get('videoCount', 0))
     }
 
 def get_video_info(video_id, api_key):
@@ -80,7 +96,15 @@ def get_video_info(video_id, api_key):
 
     return video_info
 
-
+def print_channel_info(channel_data, channel):
+    print(channel_data['view_count'])
+    print(channel_data['video_count'])
+    print(channel_data['view_count'])
+    channel.view_count = channel_data['view_count']
+    channel.video_count = channel_data['video_count']
+    channel.subscriber_count = channel_data['subscribers_count']
+    channelRepository.save(channel)
+'''''
 def print_video_info(video_data, id):
     """Выводит информацию о видео и комментарии"""
     video = videoRepository.get_by_id(id)
@@ -89,20 +113,32 @@ def print_video_info(video_data, id):
     #print(f"Категории: {video_data['category']}")
     #video.comment_count = video_data['comment_count']
     video.subscribers_count = video_data['subscribers_count']
-    '''tags = video_data['tags']
+    tags = video_data['tags']
     tags_encoded = []
     for tag in tags:
         tags_encoded.append(tag.encode("utf-8").decode("utf-8"))
-    video.tags = tags_encoded'''
+    video.tags = tags_encoded
     #video.category_id = video_data['category']
     #print(id)
-    videoRepository.save(video)
+    videoRepository.save(video)'''
 
 
 
 
+#videos = videoRepository.get_by_id_above(0)
+#UCzxCeXT34Mk6cPVYlQ3TwOg
 
-videos = videoRepository.get_by_id_above(0)
+channels = channelRepository.get_by_id_above(0)
+for channel in channels:
+    if channel.video_count is None and channel.youtube_id is not None:
+        channel_data = get_channel_stats(API_KEY, channel.youtube_id)
+        print_channel_info(channel_data, channel)
+''''
+videos = videoRepository.get_unique_channel_titles()
+for video in videos:
+    if channelRepository.find_by_title(video.channel_title) is None:
+        channel_data = get_channel_stats(API_KEY, video.channel_title)
+        print_channel_info(channel_data)
 
 for video in videos:
     i = video.id
@@ -118,4 +154,4 @@ for video in videos:
      #   print("Видео не найдено.")
 
     except Exception as e:
-        print(f"Произошла ошибка: {str(e)}")
+        print(f"Произошла ошибка: {str(e)}")'''

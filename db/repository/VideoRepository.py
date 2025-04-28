@@ -25,3 +25,11 @@ class VideoRepository:
             return self.session.query(Video).filter(Video.id >= 0).order_by(Video.id.asc()).all()
         return self.session.query(Video).filter(Video.category_id == category_id).order_by(Video.id.asc()).all()
 
+    def get_unique_channel_titles(self):
+        return self.session.query(Video).distinct(Video.channel_title).all()
+
+    def get_by_manual_category(self, manual_category: str):
+        return self.session.query(Video).filter(Video.manual_category == manual_category).all()
+
+    def get_by_channel_title(self, channel_title: str):
+        return self.session.query(Video).filter(Video.channel_title == channel_title).all()

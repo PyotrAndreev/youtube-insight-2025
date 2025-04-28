@@ -21,7 +21,7 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.add_column('videos', sa.Column('comment_count', sa.Integer(), comment='Количество комментариев'))
     op.add_column('videos', sa.Column('category_id', sa.Integer(), comment='Id категории'))
-    op.add_column('videos', sa.Column('tags', sa.JSONB, comment='Теги'))
+    op.add_column('videos', sa.Column('tags', sa.JSON, comment='Теги'))
 
 
 def downgrade() -> None:

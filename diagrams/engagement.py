@@ -5,8 +5,13 @@ import seaborn as sns
 import numpy as np
 
 from db.connect.connect import Connect
+from db.repository.ChannelRepository import ChannelRepository
 from db.repository.VideoRepository import VideoRepository
 from functions.helper import convert_to_seconds, get_video_info_by_category, get_video_info_by_channel
+
+
+session = Connect()
+videoRepository = VideoRepository(Connect.session)
 
 def plot_likes_comments_sorted_by_engagement(df, channel_col='title',
                                              likes_col='likes', comments_col='comments', views_col='views',
@@ -66,7 +71,7 @@ def plot_likes_comments_sorted_by_engagement(df, channel_col='title',
     ax.set_xlabel('Канал', fontsize=12)
     ax.set_ylabel('Количество', fontsize=12)
     ax.set_xticks(x)
-    ax.set_xticklabels(grouped_df[channel_col], rotation=45 if num_channels > 5 else 0, ha='right')
+    ax.set_xticklabels(grouped_df[channel_col], rotation=45 if num_channels >= 4 else 0, ha='right')
     ax.legend()
 
     # Подписи значений
@@ -85,7 +90,7 @@ def plot_likes_comments_sorted_by_engagement(df, channel_col='title',
 def plot_likes_comments_separate_engagement(df, channel_col='title',
                                             likes_col='likes', comments_col='comments', views_col='views',
                                             palette=['#3498db', '#e74c3c'],
-                                            figsize=None):
+                                            figsize=None, q_type=""):
     """
     Строит два отдельных графика (лайки и комментарии) с сортировкой каналов по вовлеченности,
     где вовлеченность = (лайки + комментарии) / просмотры.
@@ -139,22 +144,22 @@ def plot_likes_comments_separate_engagement(df, channel_col='title',
     # График лайков
     bars_likes = ax1.bar(x, grouped_df['likes_norm'],
                          width=bar_width, color=palette[0], alpha=0.8, label='Лайки/просмотры')
-    ax1.set_title('Лайки на просмотр по каналам (сортировка по вовлеченности)', fontsize=12)
+    ax1.set_title('Лайки на просмотр', fontsize=12)
     ax1.set_ylabel('Лайки/просмотры', fontsize=10)
     ax1.grid(True, linestyle='--', alpha=0.6)
 
     # График комментариев
     bars_comments = ax2.bar(x, grouped_df['comments_norm'],
                             width=bar_width, color=palette[1], alpha=0.8, label='Комментарии/просмотры')
-    ax2.set_title('Комментарии на просмотр по каналам', fontsize=12)
-    ax2.set_xlabel('Канал', fontsize=10)
+    ax2.set_title(f'Комментарии на просмотр', fontsize=12)
+    ax2.set_xlabel(f'{q_type}', fontsize=10)
     ax2.set_ylabel('Комментарии/просмотры', fontsize=10)
     ax2.grid(True, linestyle='--', alpha=0.6)
 
     # Общие настройки для обоих графиков
     for ax in [ax1, ax2]:
         ax.set_xticks(x)
-        ax.set_xticklabels(grouped_df[channel_col], rotation=45 if num_channels > 5 else 0, ha='right')
+        ax.set_xticklabels(grouped_df[channel_col], rotation=45 if num_channels > 3 else 0, ha='right')
         ax.legend()
 
         # Подписи значений на столбцах
@@ -252,8 +257,33 @@ def plot_engagement(df, title_col='title', views_col='views',
     plt.show()
 
 
-session = Connect()
-videoRepository = VideoRepository(Connect.session)
+def get_video_info_by_manual_category(manual_categories):
+    manual_category_list = []
+    manual_category_views_list = []
+    manual_category_likes_list = []
+    manual_category_comments_list = []
+    for manual_category in manual_categories:
+        videos = videoRepository.get_by_manual_category(manual_category)
+        print(videos)
+        views = 0
+        likes = 0
+        comments = 0
+        for video in videos:
+            views += video.view_count
+            likes += video.like_count
+            comments += video.comment_count
+        manual_category_list.append(manual_category)
+        manual_category_views_list.append(views)
+        manual_category_likes_list.append(likes)
+        manual_category_comments_list.append(comments)
+
+    info_about_manual_categories = []
+    info_about_manual_categories.append(manual_category_list)
+    info_about_manual_categories.append(manual_category_views_list)
+    info_about_manual_categories.append(manual_category_likes_list)
+    info_about_manual_categories.append(manual_category_comments_list)
+    return info_about_manual_categories
+
 
 video_length = []
 short_video_length = []
@@ -269,7 +299,7 @@ comment_stats_long_video = defaultdict(int)
 
 videos = videoRepository.get_by_id_above(0)
 name_category, category_views, category_likes, category_comments = get_video_info_by_category()
-
+'''''
 for video in videos:
     i = video.id
     video = videoRepository.get_by_id(i)
@@ -351,10 +381,30 @@ category_data = {
 }
 test_df2 = pd.DataFrame(category_data)
 
-plot_engagement(chanel_info_df, titles_name="каналам")
-plot_engagement(test_df2, titles_name="категориям")
-plot_likes_comments_sorted_by_engagement(chanel_info_df)
-plot_likes_comments_separate_engagement(chanel_info_df)
-plot_engagement(video_info_df, titles_name="видео")
-plot_likes_comments_sorted_by_engagement(video_info_df)
-plot_likes_comments_separate_engagement(video_info_df)
+#plot_engagement(chanel_info_df, titles_name="каналам")
+#plot_engagement(test_df2, titles_name="категориям")
+#plot_likes_comments_sorted_by_engagement(chanel_info_df)
+#plot_likes_comments_separate_engagement(chanel_info_df)
+#plot_engagement(video_info_df, titles_name="видео")
+#plot_likes_comments_sorted_by_engagement(video_info_df)
+#plot_likes_comments_separate_engagement(video_info_df)
+
+'''
+
+
+chanel, channel_views, channel_likes, channel_comments_amount = get_video_info_by_manual_category(["феминизм в России", "феминизм во Франции", "феминизм в Германии", "феминизм в Латинской Америке"])
+
+channel_sorted_data = sorted(zip(chanel, channel_views, channel_likes, channel_comments_amount),
+                             key=lambda x: x[2],  # Сортировка по likes
+                             reverse=True)
+
+chanel_sorted, views_sorted, likes_sorted, comments_sorted = zip(*channel_sorted_data)
+
+chanel_info_data = {
+    'title': chanel_sorted[:15],
+    'views': views_sorted[:15],
+    'likes': likes_sorted[:15],
+    'comments': comments_sorted[:15]
+}
+chanel_info_df = pd.DataFrame(chanel_info_data)
+plot_likes_comments_separate_engagement(chanel_info_df, q_type = "тема")
