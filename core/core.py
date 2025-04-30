@@ -1,13 +1,35 @@
 import logging
 import subprocess
+import time
 from pathlib import Path
 from typing import List, Tuple, Optional
 from moviepy.editor import VideoFileClip
-from moviepy.video.fx import resize, crop
+from moviepy.video.fx import resize
+from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def measure_sync_time(func):
+    def wrapper(self, *args, **kwargs):
+        start = time.time()
+        logger.info(f"[TIMER START] {func.__name__}")
+        result = func(self, *args, **kwargs)
+        end = time.time()
+        duration = end - start
+        logger.info(f"[TIMER END] {func.__name__} | Duration: {duration:.3f}s")
+        if hasattr(self, 'events'):
+            self.events.append({
+                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(start)),
+                "function": func.__name__,
+                "duration_sec": duration
+            })
+        return result
+    return wrapper
 
 class VideoCutter:
     """Класс для нарезки и обработки видео."""
-    
+
     def __init__(
         self,
         output_dir: str = "processed_shorts",
@@ -17,53 +39,43 @@ class VideoCutter:
         max_duration: int = 60,
         ffmpeg_path: str = "ffmpeg"
     ):
-        """
-        Инициализация VideoCutter.
-        
-        :param output_dir: Папка для сохранения обработанных видео
-        :param download_dir: Папка для загруженных видео
-        :param segments_dir: Папка для сегментов видео
-        :param target_resolution: Целевое разрешение (ширина, высота)
-        :param max_duration: Максимальная длительность Shorts (в секундах)
-        :param ffmpeg_path: Путь к ffmpeg
-        """
         self.output_dir = Path(output_dir)
         self.download_dir = Path(download_dir)
         self.segments_dir = Path(segments_dir)
         self.target_width, self.target_height = target_resolution
         self.max_duration = max_duration
         self.ffmpeg_path = ffmpeg_path
-        
-        # Создаем необходимые директории
+
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.download_dir.mkdir(parents=True, exist_ok=True)
         self.segments_dir.mkdir(parents=True, exist_ok=True)
-        
-        self.logger = logging.getLogger(__name__)
 
+        self.logger = logging.getLogger(__name__)
+        self.events: List[dict] = []
+
+    @measure_sync_time
     def download_video(self, video_url: str) -> Optional[Path]:
-        """Скачивает видео с YouTube."""
         try:
             from yt_dlp import YoutubeDL
-            
+
             ydl_opts = {
                 'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
                 'outtmpl': str(self.download_dir / '%(id)s.%(ext)s'),
                 'quiet': True,
             }
-            
+
             with YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(video_url, download=True)
                 return Path(ydl.prepare_filename(info))
-                
+
         except Exception as e:
             self.logger.error(f"Ошибка при скачивании видео: {e}")
             return None
 
+    @measure_sync_time
     def split_video(self, input_path: Path, segment_duration: int = 60) -> List[Path]:
-        """Разделяет видео на сегменты."""
         output_template = str(self.segments_dir / f"{input_path.stem}-%03d{input_path.suffix}")
-        
+
         cmd = [
             self.ffmpeg_path,
             '-i', str(input_path),
@@ -74,7 +86,7 @@ class VideoCutter:
             '-reset_timestamps', '1',
             output_template
         ]
-        
+
         try:
             subprocess.run(cmd, check=True)
             return list(self.segments_dir.glob(f"{input_path.stem}-*{input_path.suffix}"))
@@ -82,12 +94,13 @@ class VideoCutter:
             self.logger.error(f"Ошибка при разделении видео: {e}")
             return []
 
-    def create_short(self, input_path: Path, output_name: str = None, 
-                     start_time: float = 0, end_time: Optional[float] = None) -> Optional[Path]:
-        """Создает вертикальное видео Shorts с горизонтальным контентом и черными полосами."""
+    @measure_sync_time
+    def create_short(self, input_path: Path, output_name: str = None,
+                    start_time: float = 0, end_time: Optional[float] = None,
+                    clip_text: Optional[str] = None) -> Optional[Path]:
         if not output_name:
             output_name = f"short_{input_path.stem}.mp4"
-            
+
         output_path = self.output_dir / output_name
 
         try:
@@ -96,30 +109,49 @@ class VideoCutter:
                     clip = clip.subclip(start_time, end_time)
                 else:
                     clip = clip.subclip(start_time, start_time + self.max_duration)
-                # Ограничиваем длительность
+
                 if clip.duration > self.max_duration:
                     clip = clip.subclip(0, self.max_duration)
 
-                # Масштабируем по ширине (чтобы занять всю ширину 1080)
                 scale_factor = self.target_width / clip.size[0]
                 new_height = int(clip.size[1] * scale_factor)
 
                 resized_clip = clip.fx(resize.resize, width=self.target_width)
 
-                # Добавим черные полосы сверху и снизу
                 top_padding = (self.target_height - new_height) // 2
                 bottom_padding = self.target_height - new_height - top_padding
 
                 final_clip = resized_clip.margin(
                     top=top_padding,
                     bottom=bottom_padding,
-                    opacity=0,  # 0 = черный фон
+                    opacity=0,
                     color=(0, 0, 0)
                 )
 
-                final_clip = final_clip.set_position("center")
+                clips = [final_clip]
 
-                final_clip.write_videofile(
+                if clip_text:
+                    # Создаем текстовый клип
+                    txt_clip = TextClip(clip_text,
+                                        fontsize=50,
+                                        font="Arial-Bold",
+                                        color="white",
+                                        stroke_color="black",
+                                        stroke_width=2)
+
+                    txt_clip = txt_clip.set_duration(final_clip.duration)
+
+                    # Бегущая строка: слева направо
+                    txt_clip = txt_clip.set_position(lambda t: (
+                        self.target_width - int(t * 300) % (self.target_width + txt_clip.w),
+                        50
+                    ))
+
+                    clips.append(txt_clip)
+
+                composite = CompositeVideoClip(clips, size=(self.target_width, self.target_height))
+
+                composite.write_videofile(
                     str(output_path),
                     codec='libx264',
                     fps=clip.fps,
@@ -134,20 +166,20 @@ class VideoCutter:
         except Exception as e:
             self.logger.error(f"Ошибка при создании Shorts: {e}")
             return None
-
+        
+    @measure_sync_time
     def process_video(
         self,
         video_url: str,
         split_into_segments: bool = False,
         segment_duration: int = 60
     ) -> List[Path]:
-        """Основной метод обработки видео."""
         input_path = self.download_video(video_url)
         if not input_path:
             return []
-            
+
         results = []
-        
+
         if split_into_segments:
             segments = self.split_video(input_path, segment_duration)
             for segment in segments:
@@ -158,6 +190,14 @@ class VideoCutter:
             output_path = self.create_short(input_path)
             if output_path:
                 results.append(output_path)
-                
+
         return results
-    
+
+    def dump_events_to_file(self, filename: str = None):
+        import json
+        if not filename:
+            timestamp = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+            filename = f"core_videocutter_events_{timestamp}.json"
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(self.events, f, indent=2, ensure_ascii=False)
+        logger.info(f"События сохранены в файл: {filename}")

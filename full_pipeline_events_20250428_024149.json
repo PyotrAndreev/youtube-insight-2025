@@ -1,0 +1,142 @@
+[
+  {
+    "timestamp": "2025-04-28 02:24:56",
+    "function": "download_video",
+    "duration_sec": 19.439589977264404
+  },
+  {
+    "timestamp": "2025-04-28 02:25:15",
+    "function": "get_transcript",
+    "duration_sec": 12.967332124710083
+  },
+  {
+    "timestamp": "2025-04-28 02:25:28",
+    "function": "process_transcript_with_gpt",
+    "duration_sec": 184.08545112609863
+  },
+  {
+    "timestamp": "2025-04-28 02:28:32",
+    "function": "cut_video",
+    "duration_sec": 796.2231454849243
+  },
+  {
+    "timestamp": "2025-04-28 02:24:56",
+    "function": "process",
+    "duration_sec": 1012.7202363014221
+  },
+  {
+    "timestamp": "2025-04-28 02:25:15",
+    "function": "_get_transcript",
+    "duration_sec": 12.963736295700073
+  },
+  {
+    "timestamp": "2025-04-28 02:25:15",
+    "function": "get_and_save_transcript",
+    "duration_sec": 12.967046022415161
+  },
+  {
+    "timestamp": "2025-04-28 02:25:28",
+    "function": "_write_file",
+    "duration_sec": 0.0007882118225097656
+  },
+  {
+    "timestamp": "2025-04-28 02:25:28",
+    "function": "_save_segments",
+    "duration_sec": 0.0008060932159423828
+  },
+  {
+    "timestamp": "2025-04-28 02:25:28",
+    "function": "save_transcription",
+    "duration_sec": 0.0027086734771728516
+  },
+  {
+    "timestamp": "2025-04-28 02:25:28",
+    "function": "split_transcript",
+    "duration_sec": 0.00014925003051757812
+  },
+  {
+    "timestamp": "2025-04-28 02:25:28",
+    "function": "_build_prompt",
+    "duration_sec": 0.00015497207641601562
+  },
+  {
+    "timestamp": "2025-04-28 02:25:28",
+    "function": "_build_prompt",
+    "duration_sec": 0.00013828277587890625
+  },
+  {
+    "timestamp": "2025-04-28 02:25:28",
+    "function": "_call_ollama",
+    "duration_sec": 105.21237850189209
+  },
+  {
+    "timestamp": "2025-04-28 02:25:28",
+    "function": "_limited_call",
+    "duration_sec": 105.21710753440857
+  },
+  {
+    "timestamp": "2025-04-28 02:25:28",
+    "function": "_call_ollama",
+    "duration_sec": 109.82270741462708
+  },
+  {
+    "timestamp": "2025-04-28 02:25:28",
+    "function": "_limited_call",
+    "duration_sec": 109.82305836677551
+  },
+  {
+    "timestamp": "2025-04-28 02:27:18",
+    "function": "_parse_timecodes",
+    "duration_sec": 0.002335071563720703
+  },
+  {
+    "timestamp": "2025-04-28 02:27:18",
+    "function": "_parse_timecodes",
+    "duration_sec": 0.00047016143798828125
+  },
+  {
+    "timestamp": "2025-04-28 02:27:18",
+    "function": "_build_prompt",
+    "duration_sec": 0.00048422813415527344
+  },
+  {
+    "timestamp": "2025-04-28 02:27:18",
+    "function": "_build_prompt",
+    "duration_sec": 0.0002238750457763672
+  },
+  {
+    "timestamp": "2025-04-28 02:27:18",
+    "function": "_call_ollama",
+    "duration_sec": 66.46207189559937
+  },
+  {
+    "timestamp": "2025-04-28 02:27:18",
+    "function": "_limited_call",
+    "duration_sec": 66.46278476715088
+  },
+  {
+    "timestamp": "2025-04-28 02:27:18",
+    "function": "_call_ollama",
+    "duration_sec": 74.02475094795227
+  },
+  {
+    "timestamp": "2025-04-28 02:27:18",
+    "function": "_limited_call",
+    "duration_sec": 74.02536678314209
+  },
+  {
+    "timestamp": "2025-04-28 02:28:32",
+    "function": "_parse_timecodes",
+    "duration_sec": 0.00011014938354492188
+  },
+  {
+    "timestamp": "2025-04-28 02:28:32",
+    "function": "_parse_timecodes",
+    "duration_sec": 0.00010037422180175781
+  },
+  {
+    "timestamp": "2025-04-28 02:25:28",
+    "function": "extract_timecodes",
+    "duration_sec": 184.06628561019897
+  }
+]
