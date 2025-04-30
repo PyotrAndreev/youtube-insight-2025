@@ -27,6 +27,7 @@ def measure_async_time(func):
         return result
     return wrapper
 
+
 def measure_sync_time(func):
     def wrapper(self, *args, **kwargs):
         start = time.time()
@@ -44,7 +45,7 @@ def measure_sync_time(func):
         return result
     return wrapper
 
-# --- Класс GPTServiceOllama ---
+
 class GPTServiceOllama:
     def __init__(self, model: str = "llama3"):
         self.model = model
@@ -54,29 +55,22 @@ class GPTServiceOllama:
     @measure_async_time
     async def _call_ollama(self, prompt: str) -> str:
         cmd = ["ollama", "run", self.model]
-
         print("==== ОТПРАВЛЯЕМ ПРОМПТ ====")
         print(prompt[:2000])
         print("===========================")
-
         process = await asyncio.create_subprocess_exec(
             *cmd,
             stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
-
         stdout, stderr = await process.communicate(input=prompt.encode())
-
         if stderr:
             print(f"Ошибка Ollama: {stderr.decode()}")
-
         response = stdout.decode()
-
         print("==== ОТВЕТ МОДЕЛИ ====")
         print(response)
         print("======================")
-
         return response
 
     @measure_async_time
@@ -85,46 +79,60 @@ class GPTServiceOllama:
             return await self._call_ollama(prompt)
 
     @measure_async_time
-    async def extract_timecodes(self, transcript_text: str) -> List[Dict]:
+    async def extract_timecodes(
+        self,
+        transcript_text: str,
+        popular_segments: List[Dict],
+        batch_size: int = 2
+    ) -> List[Dict]:
+        """
+        Анализ транскрипта и популярных аудиосегментов.
+        Возвращает список таймкодов и описаний.
+        """
         parts = self.split_transcript(transcript_text)
-        timecodes = []
-
-        batch_size = 2  # сколько запросов параллельно обрабатываем
+        timecodes: List[Dict] = []
         for i in range(0, len(parts), batch_size):
             batch = parts[i:i+batch_size]
-            tasks = [self._limited_call(self._build_prompt(part)) for part in batch]
+            tasks = [
+                self._limited_call(
+                    self._build_prompt(part, popular_segments)
+                )
+                for part in batch
+            ]
             results = await asyncio.gather(*tasks)
-
             for idx, response in enumerate(results):
                 parsed = self._parse_timecodes(response)
                 if not parsed:
                     print(f"[ВНИМАНИЕ] Парсер не нашёл таймкодов в ответе {i+idx+1}.")
                 timecodes.extend(parsed)
-
-            await asyncio.sleep(0.1)  # маленькая пауза между батчами
-
+            await asyncio.sleep(0.1)
         return timecodes
-
 
     @measure_sync_time
     def split_transcript(self, transcript: str, max_length: int = 2000) -> List[str]:
         return [transcript[i:i + max_length] for i in range(0, len(transcript), max_length)]
 
     @measure_sync_time
-    def _build_prompt(self, transcript_text: str) -> str:
+    def _build_prompt(
+        self,
+        transcript_text: str,
+        popular_segments: List[Dict]
+    ) -> str:
+        segments_str = json.dumps(popular_segments, ensure_ascii=False)
         return (
             "Ты — эксперт по созданию вирусных YouTube Shorts.\n"
-            "Проанализируй транскрипт видео и найди самые вовлекающие моменты.\n"
-            "Формат вывода:\n"
-            "00:30 - 01:00 Шокирующее признание\n"
-            "01:10 - 01:50 Смешной момент\n\n"
+            "У тебя есть транскрипт видео и популярные аудио-сегменты: "
+            f"{segments_str}\n\n"
+            "Проанализируй транскрипт и аудио-сегменты, найди самые популярные моменты, которые точно понравятся зрителям.\n"
+            "Формат вывода (каждая строка):\n"
+            "<мм:сс> - <мм:сс> Описание момента\n\n"
             "Вот транскрипт:\n\n"
             f"{transcript_text}"
         )
 
     @measure_sync_time
     def _parse_timecodes(self, gpt_response: str) -> List[Dict]:
-        timecodes = []
+        timecodes: List[Dict] = []
         pattern = r"(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s+(.+)"
         for line in gpt_response.splitlines():
             match = re.match(pattern, line.strip())
