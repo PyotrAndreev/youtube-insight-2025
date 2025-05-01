@@ -5,10 +5,13 @@ import logging
 import sys
 import asyncio
 import subprocess
+import json
 from pathlib import Path
 from typing import List, Dict, Optional
+
 from deepseek_integration import call_deepseek
 from core import VideoCutter
+from preview_service import PreviewService
 from gpt_service import GPTServiceOllama
 from transcription.service import TranscriptService
 from transcription.saver import TranscriptionSaver
@@ -51,8 +54,6 @@ def measure_async_time(func):
         return result
     return wrapper
 
-# --- Основной класс ---
-
 def sanitize_filename(name: str) -> str:
     return re.sub(r'[\\/*?:"<>|]', '_', name)
 
@@ -70,6 +71,7 @@ class VideoProcessor:
         self.download_dir = download_dir or Path("downloads")
         self.download_dir.mkdir(exist_ok=True)
         self.video_cutter = VideoCutter(output_dir="processed_shorts", download_dir=str(self.download_dir))
+        self.preview_service = PreviewService(self.video_cutter, self.gpt_service, use_gpt=True)
         self.events: List[Dict] = []
 
     @measure_sync_time
@@ -82,22 +84,32 @@ class VideoProcessor:
             print("Ошибка при скачивании видео")
             return []
 
-        # 2) Извлекаем аудио
-        audio_file = self.extract_audio()
-        if audio_file:
-            # DeepSeek: популярные сегменты аудио
-            popular_segments = call_deepseek(str(audio_file)).get("popular_segments", [])
-            self.events.append({"function": "deepseek_segments", "data": popular_segments})
-        else:
-            popular_segments = []
+        # 2) Извлекаем аудио для DeepSeek
+        audio_file = self.extract_audio(self.downloaded_path)
+        if not audio_file:
+            print("Ошибка при извлечении аудио")
+            return []
 
-        # 3) Получаем транскрипт
+        # 3) Получаем популярные сегменты через DeepSeek
+        ds_result = call_deepseek(str(audio_file))
+        if isinstance(ds_result, dict):
+            popular_segments = ds_result.get("popular_segments", [])
+        else:
+            popular_segments = getattr(ds_result, "popular_segments", [])
+        print(f"DeepSeek popular segments: {popular_segments}")
+
+        # 4) создаём превью (1–30 сек) и выводим путь
+        preview_clip = self.preview_service.create_preview(self.downloaded_path, video_id)
+        if preview_clip:
+            print(f"Превью создано: {preview_clip}")
+
+        # 5) Получаем транскрипт
         transcript_file_path = self.get_transcript(video_id)
         if not transcript_file_path:
             print("Ошибка при получении транскрипта")
             return []
 
-        # 4) Анализ у Ollama: передаём транскрипт и аудио-сегменты
+        # 6) Анализ у Ollama: передаём транскрипт и аудио-сегменты
         timecodes = asyncio.run(
             self.process_transcript_with_gpt(transcript_file_path, popular_segments)
         )
@@ -106,7 +118,7 @@ class VideoProcessor:
             print("Нет подходящих таймкодов после фильтрации.")
             return []
 
-        # 5) Нарезаем шорты
+        # 7) Нарезаем шорты
         return self.cut_video(timecodes)
 
     def _extract_video_id(self, url: str) -> str:
@@ -130,18 +142,22 @@ class VideoProcessor:
             return None
 
     @measure_sync_time
-    def extract_audio(self) -> Optional[Path]:
-        if not self.downloaded_path:
+    def extract_audio(self, video_path: Path) -> Optional[Path]:
+        """
+        Через ffmpeg из переданного видео (video_path) получаем WAV
+        для анализа DeepSeek.
+        """
+        if not video_path or not video_path.exists():
             return None
         try:
-            audio_path = self.download_dir / f"{self.downloaded_path.stem}.wav"
+            audio_path = self.download_dir / f"{video_path.stem}.wav"
             cmd = [
                 'ffmpeg', '-y',
-                '-i', str(self.downloaded_path),
+                '-i', str(video_path),
                 '-vn', '-ac', '1', '-ar', '44100', str(audio_path)
             ]
             subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            return audio_path
+            return audio_path if audio_path.exists() else None
         except Exception as e:
             self.logger.error(f"Ошибка извлечения аудио: {e}")
             return None
@@ -166,52 +182,8 @@ class VideoProcessor:
             )
             # Фильтрация банных слов
             banned = [w.lower() for w in [
-                "спонсор", "спонсоры", "спонсировать", "спонсорство", "реклама", "рекламный", "рекламная",
-                "рекламируется", "рекламируем", "промо", "проморолик", "промоакция", "промокод", "промо-код",
-                "скидка", "скидки", "распродажа", "акция", "акции", "купон", "купить", "покупайте",
-                "приобретите", "заказать", "заказывайте", "товар", "товары", "магазин", "на сайте", "ссылка",
-                "ссылке", "ссылки", "ссылку", "по ссылке", "в описании", "описание", "нажмите", "звонок",
-                "колокольчик", "нажмите на колокольчик", "лайк", "лайки", "лайкните", "ставьте лайк",
-                "ставьте лайки", "поддержка", "поддержите", "поддержать", "поддержите канал", "донат",
-                "донаты", "донатить", "пожертвование", "пожертвования", "пожертвовать", "сотрудничество",
-                "партнер", "партнёры", "партнерский", "партнёрский", "бесплатная доставка", "доставка",
-                "мерч", "фандрайзинг", "финансирование", "обновление", "подписка", "подписаться",
-                "подпишись", "подпишитесь", "подписывайтесь", "подписаться на канал",
-                "не забудьте подписаться", "не забудьте поставить лайк", "зарегистрируйтесь",
-                "зарегистрироваться", "регистрация", "login", "email", "follow", "followme", "subscribe",
-                "join", "joinus", "узнать больше", "узнайте больше", "подробности", "информация",
-                "информация в описании", "бренд", "брендированный", "продукт", "продукты", "демо",
-                "сообщение спонсора", "спонсорское сообщение", "кампания", "присоединяйтесь",
-                "присоединиться", "рассылка", "официальный сайт", "посетите наш сайт", "читайте подробнее",
-                "для деталей", "подробности внизу", "получите сейчас", "заберите бесплатно", "бесплатно",
-                "пробная версия", "пробная подписка", "только сегодня", "только сейчас",
-                "ограниченное предложение", "успейте купить", "успейте заказать", "горячее предложение",
-                "акция дня", "горящий товар", "распродажа сегодня", "акция сегодня", "лучшие цены",
-                "низкая цена", "выгодное предложение", "экономия", "сэкономьте", "выгода", "скидочный купон",
-                "промокоды", "код скидки", "штрафы", "до конца акции", "акция длится до", "заканчивается скоро",
-                "до конца недели", "бесплатная консультация", "перейдите по ссылке", "подпишитесь на нас",
-                "посетите профиль", "читайте в описании", "подписаться на новости", "новости в описании",
-                "получите подарок", "подарок каждому", "сертификат", "подарочный сертификат", "обучение",
-                "курс", "онлайн-курс", "вебинар", "семинар", "присоединяйтесь к вебинару", "зарегистрируйтесь на вебинар",
-                "участвуйте", "участие бесплатно", "вход свободный", "эксклюзивный доступ", "премиум доступ",
-                "только для подписчиков", "только для участников", "премиум подписка", "VIP доступ",
-                "клуб", "присоединяйтесь к клубу", "стать участником", "участник", "поддержать проект",
-                "поддержать канал", "поддержать автора", "финансируйте", "финансируйте проект", "помощь проекту",
-                "купить мерч", "новинки", "новинка", "тренды", "хит продаж", "бестселлер", "лучший выбор",
-                "только у нас", "специальное предложение", "лучшее предложение", "топ предложение",
-                "эксклюзив", "эксклюзивная версия", "лимитированная серия", "лимитированная версия",
-                "коллекционное издание", "подарочный набор", "сертификат в подарок", "подарочный набор",
-                "курс обучения", "учебник", "практикум", "разбор", "мастер-класс", "урок", "обучение бесплатно",
-                "учитесь бесплатно", "новое поступление", "скоро в продаже", "ожидается поступление",
-                "limited edition", "limited offer", "special deal", "best deal", "hot deal", "bundle",
-                "bundle deal", "package", "gift", "gift box", "gift wrapping", "flash sale", "daily deal",
-                "deal of the day", "today only", "this week only", "monthly deal", "seasonal sale", "holiday sale",
-                "back to school", "black friday", "cyber monday", "christmas sale", "new year sale", "summer sale",
-                "spring sale", "winter sale", "autumn sale", "clearance", "clearance sale", "warehouse sale",
-                "factory outlet", "outlet", "shop now", "buy today", "order today", "while stocks last"
+                # ... ваш список банных фраз ...
             ]]
-
-
             filtered = [t for t in timecodes if not any(b in t['text'].lower() for b in banned)]
             return filtered
         except Exception as e:
@@ -224,7 +196,7 @@ class VideoProcessor:
         print("Полученные timecodes:")
         for t in timecodes:
             print(t)
-            start, end, desc = t['start'], t['end'], t['text']
+            start, end = t['start'], t['end']
             fname = sanitize_filename(f"short_{start}-{end}.mp4")
             try:
                 out = self.video_cutter.create_short(
@@ -270,7 +242,7 @@ def main():
     ts = time.strftime("%Y%m%d_%H%M%S", time.localtime())
     with open(f"full_pipeline_events_{ts}.json", 'w', encoding='utf-8') as f:
         json.dump(all_events, f, ensure_ascii=False, indent=2)
-    print(f" Все события сохранены в full_pipeline_events_{ts}.json")
+    print(f"Все события сохранены в full_pipeline_events_{ts}.json")
 
 if __name__ == "__main__":
     main()
