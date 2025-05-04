@@ -1,0 +1,12 @@
+[
+  {
+    "timestamp": "2025-05-04 15:23:24",
+    "function": "_get_transcript",
+    "duration_sec": 1.3300843238830566
+  },
+  {
+    "timestamp": "2025-05-04 15:23:24",
+    "function": "get_and_save_transcript",
+    "duration_sec": 1.3419811725616455
+  }
+]

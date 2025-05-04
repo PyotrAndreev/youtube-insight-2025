@@ -1,0 +1,17 @@
+[
+  {
+    "timestamp": "2025-05-04 15:23:26",
+    "function": "_write_file",
+    "duration_sec": 0.0018537044525146484
+  },
+  {
+    "timestamp": "2025-05-04 15:23:26",
+    "function": "_save_segments",
+    "duration_sec": 0.006340742111206055
+  },
+  {
+    "timestamp": "2025-05-04 15:23:26",
+    "function": "save_transcription",
+    "duration_sec": 0.009500741958618164
+  }
+]

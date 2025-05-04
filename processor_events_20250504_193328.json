@@ -1,0 +1,27 @@
+[
+  {
+    "timestamp": "2025-05-04 15:20:52",
+    "function": "download_video",
+    "duration_sec": 152.2559633255005
+  },
+  {
+    "timestamp": "2025-05-04 15:23:24",
+    "function": "get_transcript",
+    "duration_sec": 1.3423762321472168
+  },
+  {
+    "timestamp": "2025-05-04 15:23:26",
+    "function": "process_transcript_with_gpt",
+    "duration_sec": 3786.1268236637115
+  },
+  {
+    "timestamp": "2025-05-04 16:26:32",
+    "function": "cut_video",
+    "duration_sec": 11216.634015798569
+  },
+  {
+    "timestamp": "2025-05-04 15:20:52",
+    "function": "process",
+    "duration_sec": 15156.377002239227
+  }
+]

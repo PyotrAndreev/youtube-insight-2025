@@ -9,9 +9,7 @@ import json
 from pathlib import Path
 from typing import List, Dict, Optional
 
-from deepseek_integration import call_deepseek
 from core import VideoCutter
-from preview_service import PreviewService
 from gpt_service import GPTServiceOllama
 from transcription.service import TranscriptService
 from transcription.saver import TranscriptionSaver
@@ -37,6 +35,7 @@ def measure_sync_time(func):
         return result
     return wrapper
 
+
 def measure_async_time(func):
     async def wrapper(self, *args, **kwargs):
         start = time.time()
@@ -54,15 +53,30 @@ def measure_async_time(func):
         return result
     return wrapper
 
-def sanitize_filename(name: str) -> str:
-    return re.sub(r'[\\/*?:"<>|]', '_', name)
+
+def parse_timecode(tc: str) -> float:
+    """
+    Преобразует строковый таймкод формата "HH:MM:SS" или "MM:SS" в секунды.
+    """
+    parts = tc.split(':')
+    nums = [float(p) for p in parts]
+    if len(nums) == 3:
+        h, m, s = nums
+    elif len(nums) == 2:
+        h = 0
+        m, s = nums
+    else:
+        return float(nums[0])
+    return h * 3600 + m * 60 + s
 
 class VideoProcessor:
-    def __init__(self,
-                 video_url: str,
-                 transcript_service: TranscriptService,
-                 gpt_service: GPTServiceOllama,
-                 download_dir: Optional[Path] = None):
+    def __init__(
+        self,
+        video_url: str,
+        transcript_service: TranscriptService,
+        gpt_service: GPTServiceOllama,
+        download_dir: Optional[Path] = None
+    ):
         self.video_url = video_url
         self.transcript_service = transcript_service
         self.gpt_service = gpt_service
@@ -71,7 +85,6 @@ class VideoProcessor:
         self.download_dir = download_dir or Path("downloads")
         self.download_dir.mkdir(exist_ok=True)
         self.video_cutter = VideoCutter(output_dir="processed_shorts", download_dir=str(self.download_dir))
-        self.preview_service = PreviewService(self.video_cutter, self.gpt_service, use_gpt=True)
         self.events: List[Dict] = []
 
     @measure_sync_time
@@ -84,32 +97,16 @@ class VideoProcessor:
             print("Ошибка при скачивании видео")
             return []
 
-        # 2) Извлекаем аудио для DeepSeek
-        audio_file = self.extract_audio(self.downloaded_path)
-        if not audio_file:
-            print("Ошибка при извлечении аудио")
-            return []
+        # Вместо DeepSeek: используем пустой список сегментов
+        popular_segments: List[Dict] = []
 
-        # 3) Получаем популярные сегменты через DeepSeek
-        ds_result = call_deepseek(str(audio_file))
-        if isinstance(ds_result, dict):
-            popular_segments = ds_result.get("popular_segments", [])
-        else:
-            popular_segments = getattr(ds_result, "popular_segments", [])
-        print(f"DeepSeek popular segments: {popular_segments}")
-
-        # 4) создаём превью (1–30 сек) и выводим путь
-        preview_clip = self.preview_service.create_preview(self.downloaded_path, video_id)
-        if preview_clip:
-            print(f"Превью создано: {preview_clip}")
-
-        # 5) Получаем транскрипт
+        # 2) Получаем транскрипт
         transcript_file_path = self.get_transcript(video_id)
         if not transcript_file_path:
             print("Ошибка при получении транскрипта")
             return []
 
-        # 6) Анализ у Ollama: передаём транскрипт и аудио-сегменты
+        # 3) Анализ у Ollama: передаём транскрипт и (пустые) аудио-сегменты
         timecodes = asyncio.run(
             self.process_transcript_with_gpt(transcript_file_path, popular_segments)
         )
@@ -118,7 +115,7 @@ class VideoProcessor:
             print("Нет подходящих таймкодов после фильтрации.")
             return []
 
-        # 7) Нарезаем шорты
+        # 4) Нарезаем шорты
         return self.cut_video(timecodes)
 
     def _extract_video_id(self, url: str) -> str:
@@ -142,27 +139,6 @@ class VideoProcessor:
             return None
 
     @measure_sync_time
-    def extract_audio(self, video_path: Path) -> Optional[Path]:
-        """
-        Через ffmpeg из переданного видео (video_path) получаем WAV
-        для анализа DeepSeek.
-        """
-        if not video_path or not video_path.exists():
-            return None
-        try:
-            audio_path = self.download_dir / f"{video_path.stem}.wav"
-            cmd = [
-                'ffmpeg', '-y',
-                '-i', str(video_path),
-                '-vn', '-ac', '1', '-ar', '44100', str(audio_path)
-            ]
-            subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            return audio_path if audio_path.exists() else None
-        except Exception as e:
-            self.logger.error(f"Ошибка извлечения аудио: {e}")
-            return None
-
-    @measure_sync_time
     def get_transcript(self, video_id: str) -> Optional[str]:
         print(f"Получение транскрипта для видео {video_id}...")
         return self.transcript_service.get_and_save_transcript(video_id)
@@ -175,53 +151,51 @@ class VideoProcessor:
     ) -> List[Dict]:
         try:
             transcript_text = Path(transcript_file_path).read_text(encoding='utf-8')
-            # Вызываем Ollama с текстом и аудио-сегментами
             timecodes = await self.gpt_service.extract_timecodes(
                 transcript_text,
                 popular_segments
             )
-            # Фильтрация банных слов
-            banned = [w.lower() for w in [
-                # ... ваш список банных фраз ...
-            ]]
-            filtered = [t for t in timecodes if not any(b in t['text'].lower() for b in banned)]
-            return filtered
-        except Exception as e:
-            print(f"Ошибка при обработке транскрипта с GPT: {e}")
+            return timecodes
+        except Exception:
             return []
 
     @measure_sync_time
     def cut_video(self, timecodes: List[Dict]) -> List[Optional[str]]:
-        output_paths: List[str] = []
-        print("Полученные timecodes:")
-        for t in timecodes:
-            print(t)
-            start, end = t['start'], t['end']
-            fname = sanitize_filename(f"short_{start}-{end}.mp4")
-            try:
-                out = self.video_cutter.create_short(
-                    input_path=self.downloaded_path,
-                    output_name=fname,
-                    start_time=start,
-                    end_time=end
-                )
-                if out:
-                    output_paths.append(out)
-            except Exception as e:
-                print(f"Ошибка при создании Short: {e}")
-        return output_paths
+        results: List[Optional[str]] = []
+        for tc in timecodes:
+            raw_start = tc.get('start', 0)
+            raw_end = tc.get('end', raw_start)
+            # Конвертация таймкодов в секунды
+            start = parse_timecode(raw_start) if isinstance(raw_start, str) else float(raw_start)
+            end = parse_timecode(raw_end) if isinstance(raw_end, str) else float(raw_end)
+            # Ограничение по максимальной длительности
+            max_dur = self.video_cutter.max_duration
+            if end - start > max_dur:
+                end = start + max_dur
+            clip_path = self.video_cutter.create_short(
+                input_path=self.downloaded_path,
+                output_name=f"short_{int(start)}-{int(end)}.mp4",
+                start_time=start,
+                end_time=end
+            )
+            if clip_path:
+                results.append(str(clip_path))
+        return results
 
-    def dump_events_to_file(self, filename: str = None):
-        if not filename:
-            ts = time.strftime("%Y%m%d_%H%M%S", time.localtime())
-            filename = f"video_processor_events_{ts}.json"
+
+    def dump_events_to_file(self):
+        """
+        Сохраняет накопленные события таймеров в JSON-файл.
+        """
+        ts = time.strftime("%Y%m%d_%H%M%S", time.localtime())
+        filename = f"processor_events_{ts}.json"
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(self.events, f, ensure_ascii=False, indent=2)
-        logger.info(f"События сохранены в файл: {filename}")
+        print(f"События VideoProcessor сохранены в {filename}")
 
 # --- Пример запуска ---
 def main():
-    video_url = sys.argv[1] if len(sys.argv) > 1 else "https://www.youtube.com/watch?v=JGRAtRzGWlw"
+    video_url = sys.argv[1] if len(sys.argv) > 1 else "https://www.youtube.com/watch?v=G74W62Fsz3I"
     saver = TranscriptionSaver(output_dir="transcriptions")
     transcript_service = TranscriptService(saver=saver)
     gpt_service = GPTServiceOllama()
