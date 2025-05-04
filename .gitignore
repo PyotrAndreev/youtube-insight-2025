@@ -170,3 +170,4 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+video_segments/*.webm
