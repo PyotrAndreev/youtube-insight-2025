@@ -392,7 +392,7 @@ test_df2 = pd.DataFrame(category_data)
 '''
 
 
-chanel, channel_views, channel_likes, channel_comments_amount = get_video_info_by_manual_category(["феминизм в России", "феминизм во Франции", "феминизм в Германии", "феминизм в Латинской Америке"])
+chanel, channel_views, channel_likes, channel_comments_amount = get_video_info_by_manual_category(["политика в России", "политика во Франции", "политика в Америке"])
 
 channel_sorted_data = sorted(zip(chanel, channel_views, channel_likes, channel_comments_amount),
                              key=lambda x: x[2],  # Сортировка по likes

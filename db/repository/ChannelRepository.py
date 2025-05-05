@@ -19,3 +19,6 @@ class ChannelRepository:
 
     def get_by_id_above(self, channel_id: int):
         return self.session.query(Channel).filter(Channel.id >= channel_id).order_by(Channel.id.asc()).all()
+
+    def get_by_youtube_id(self, youtube_id: str) -> Optional[Channel]:
+        return self.session.query(Channel).filter(Channel.youtube_id == youtube_id).first()

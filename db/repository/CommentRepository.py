@@ -16,3 +16,10 @@ class CommentRepository:
 
     def get_by_video_id(self, video_id: int):
          return self.session.query(Comment).filter(Comment.video_id == video_id).all()
+
+    def find_comment_by_params(self, params: list) -> Optional[Comment]:
+        text = params[0]
+        video_id = params[1]
+        like_count = params[2]
+        return self.session.query(Comment).filter(Comment.text == text,Comment.video_id == video_id,
+            Comment.like_count == like_count).first()

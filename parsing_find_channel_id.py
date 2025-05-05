@@ -31,7 +31,7 @@ for video in videos:
     if channelRepository.find_by_title(video.channel_title) is None:
         video_url = f"https://www.youtube.com/watch?v={video.youtube_id}"  # Пример видео
         channel_id = get_channel_id_from_video(video_url)
-        if channel_id:
+        if channel_id and channelRepository.get_by_youtube_id(channel_id) is None:
             channel = Channel()
             channel.title = video.channel_title
             channel.youtube_id = channel_id
