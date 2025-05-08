@@ -1,9 +1,12 @@
 import nltk
-# Дополняем анализ центров кластеров
+import spacy
+import pandas as pd
 from sklearn.metrics import pairwise_distances_argmin_min
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sentence_transformers import SentenceTransformer
+
+from comment_analysis.tone_of_comments import analyze_comments
 from db.repository.ChannelRepository import ChannelRepository
 from sklearn.cluster import KMeans
 from sklearn.manifold import TSNE
@@ -46,6 +49,23 @@ def clean_text(text):
 
     tokens = word_tokenize(text.lower())
     tokens = [word for word in tokens if word.isalnum() and word not in stop_words]
+    return " ".join(tokens)
+
+
+def clean_text_aggressive(text):
+    # Удаляем URL
+    text = re.sub(r'https?://\S+|www\.\S+', '', text)
+
+    # Удаляем эмодзи и спецсимволы
+    text = re.sub(r'[^\w\s#]', ' ', text)
+
+    # Лемматизация
+    nlp = spacy.load('ru_core_news_sm')
+    doc = nlp(text)
+    tokens = [token.lemma_ for token in doc if not token.is_stop and token.is_alpha]
+
+    tokens = [word for word in tokens if len(word) > 5]
+
     return " ".join(tokens)
 
 
@@ -104,10 +124,32 @@ for i in range(num_clusters):
     print(f"\nКластер {i}:")
     print(f"Ключевые слова: {cluster_descriptions[i].split(':')[1].strip()}")
     print("---")
-    print(f"Центроид (ближайший комментарий): '{closest_comment}'")
-    print("\nТоп-3 типичных комментария:")
+    print(f"Центр: '{closest_comment}'")
+    print("\nТоп-3 ближайших комментария:")
+
     for j, comment in enumerate(top3_comments, 1):
         print(f"{j}. {comment}")
+    cluster_points = embeddings[clusters == i]
+    cluster_indices = np.where(clusters == i)[0]
+    video_titles1 = np.array(video_titles)
+    cluster_comments = video_titles1[cluster_indices]
+
+    comm = []
+    for idx, comment in enumerate(cluster_comments, 1):
+        comm.append(comment)
+
+    sample_comments = pd.DataFrame({
+        'text': comm
+    })
+
+    results = analyze_comments(sample_comments)
+    print(f"Количество комментариев: {len(comm)}")
+
+    print("\nРезультаты анализа тональности:")
+    print(f"Позитивных: {results['stats']['positive']} ({results['stats']['positive_perc']:.1f}%)")
+    print(f"Негативных: {results['stats']['negative']} ({results['stats']['negative_perc']:.1f}%)")
+    print(f"Нейтральных: {results['stats']['neutral']} ({results['stats']['neutral_perc']:.1f}%)")
+
 
 legend_elements = []
 for i, desc in enumerate(cluster_descriptions):

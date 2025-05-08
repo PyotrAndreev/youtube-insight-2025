@@ -119,3 +119,30 @@ def get_video_info_by_channel(category_id):
     info_about_channel.append(channel_comments_amount)
     return info_about_channel
 
+def get_video_info_by_manual_category(manual_categories):
+    manual_category_list = []
+    manual_category_views_list = []
+    manual_category_likes_list = []
+    manual_category_comments_list = []
+    for manual_category in manual_categories:
+        videos = videoRepository.get_by_manual_category(manual_category)
+        print(videos)
+        views = 0
+        likes = 0
+        comments = 0
+        for video in videos:
+            views += video.view_count
+            likes += video.like_count
+            comments += video.comment_count
+        manual_category_list.append(manual_category)
+        manual_category_views_list.append(views)
+        manual_category_likes_list.append(likes)
+        manual_category_comments_list.append(comments)
+
+    info_about_manual_categories = []
+    info_about_manual_categories.append(manual_category_list)
+    info_about_manual_categories.append(manual_category_views_list)
+    info_about_manual_categories.append(manual_category_likes_list)
+    info_about_manual_categories.append(manual_category_comments_list)
+    return info_about_manual_categories
+

@@ -18,27 +18,6 @@ channelRepository = ChannelRepository(Connect.session)
 
 def get_channel_stats(api_key, channel_id):
     youtube = build('youtube', 'v3', developerKey=api_key)
-    '''channel_name = channel_title
-
-    # Запрос к API
-    request = youtube.search().list(
-        q=channel_name, 
-        part="id,snippet",  
-        type="channel",
-        maxResults=1 
-    )
-
-    # Выполняем запрос
-    response = request.execute()
-
-    print(response)
-    print(channel_name)
-    print(response["items"])
-    if len(response["items"]) != 0:
-        channel_id = response["items"][0]["id"]["channelId"]
-        print(f"ID канала '{channel_name}': {channel_id}")
-    '''
-
     print(channel_id)
     request = youtube.channels().list(
         part='statistics',
