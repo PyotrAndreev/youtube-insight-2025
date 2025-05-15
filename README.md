@@ -231,7 +231,12 @@ pip install -r requirements.txt
 
 ```bash
 # Анализ трендов и генерация отчётов
-python main.py --analysis trends --output report.pdf
+python search_for_similar_videos.py
+python diagrams.py
+python correlation.py
+python clustering.py
+python comments_clustering.py
+
 
 # Обработка видео и создание шортсов
 python video_processor.py https://www.youtube.com/watch?v=VIDEO_ID
