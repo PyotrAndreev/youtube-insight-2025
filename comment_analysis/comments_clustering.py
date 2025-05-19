@@ -5,8 +5,7 @@ from sklearn.metrics import pairwise_distances_argmin_min
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sentence_transformers import SentenceTransformer
-
-from comment_analysis.tone_of_comments import analyze_comments
+from db.models.playlist.playlist import Playlist
 from db.repository.ChannelRepository import ChannelRepository
 from sklearn.cluster import KMeans
 from sklearn.manifold import TSNE
@@ -20,6 +19,27 @@ from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bo
 
 from db.connect.connect import Connect
 from db.repository.VideoRepository import VideoRepository
+
+import pymorphy3
+from collections import OrderedDict
+
+morph = pymorphy3.MorphAnalyzer()
+
+
+def remove_same_root_words(text: list):
+    words = text
+    seen_lemmas = set()
+    result = []
+
+    for word in words:
+        lemma = morph.parse(word)[0].normal_form
+        if lemma not in seen_lemmas:
+            result.append(word)
+            seen_lemmas.add(lemma)
+
+    return result
+
+
 
 session = Connect()
 videoRepository = VideoRepository(Connect.session)
@@ -48,7 +68,7 @@ def clean_text(text):
     text = re.sub(r'\s+', ' ', text).strip()
 
     tokens = word_tokenize(text.lower())
-    tokens = [word for word in tokens if word.isalnum() and word not in stop_words]
+    tokens = [word for word in tokens if word.isalnum() and word not in stop_words and len(word)>3]
     return " ".join(tokens)
 
 
@@ -80,6 +100,7 @@ for j in cleaned_titles1:
 model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
 embeddings = model.encode(cleaned_titles)
 
+
 num_clusters = 10
 kmeans = KMeans(n_clusters=num_clusters, random_state=42)
 clusters = kmeans.fit_predict(embeddings)
@@ -95,7 +116,8 @@ def get_cluster_keywords(cluster_titles, top_n=5):
 cluster_descriptions = []
 for i in range(num_clusters):
     cluster_titles = [cleaned_titles[j] for j in range(len(cleaned_titles)) if clusters[j] == i]
-    keywords = get_cluster_keywords(cluster_titles)
+    keywords1 = get_cluster_keywords(cluster_titles)
+    keywords = remove_same_root_words(keywords1)
     description = f"Cluster {i}: {', '.join(keywords)}"
     cluster_descriptions.append(description)
 
@@ -133,23 +155,6 @@ for i in range(num_clusters):
     cluster_indices = np.where(clusters == i)[0]
     video_titles1 = np.array(video_titles)
     cluster_comments = video_titles1[cluster_indices]
-
-    comm = []
-    for idx, comment in enumerate(cluster_comments, 1):
-        comm.append(comment)
-
-    sample_comments = pd.DataFrame({
-        'text': comm
-    })
-
-    results = analyze_comments(sample_comments)
-    print(f"Количество комментариев: {len(comm)}")
-
-    print("\nРезультаты анализа тональности:")
-    print(f"Позитивных: {results['stats']['positive']} ({results['stats']['positive_perc']:.1f}%)")
-    print(f"Негативных: {results['stats']['negative']} ({results['stats']['negative_perc']:.1f}%)")
-    print(f"Нейтральных: {results['stats']['neutral']} ({results['stats']['neutral_perc']:.1f}%)")
-
 
 legend_elements = []
 for i, desc in enumerate(cluster_descriptions):

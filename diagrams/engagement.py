@@ -8,7 +8,8 @@ from db.connect.connect import Connect
 from db.repository.ChannelRepository import ChannelRepository
 from db.repository.VideoRepository import VideoRepository
 from functions.helper import (convert_to_seconds, get_video_info_by_category, get_video_info_by_channel,
-                              get_video_info_by_manual_category)
+                              get_video_info_by_manual_category, get_videos_from_channel,
+                              get_videos_from_channel, get_videos_from_same_channels)
 
 session = Connect()
 videoRepository = VideoRepository(Connect.session)
@@ -173,7 +174,6 @@ def plot_likes_comments_separate_engagement(df, channel_col='title',
     plt.tight_layout()
     plt.show()
 
-
 def plot_engagement(df, title_col='title', views_col='views',
                     likes_col='likes', comments_col='comments',
                     palette='viridis', titles_name="", figsize=None):
@@ -272,8 +272,8 @@ comment_stats_all = defaultdict(int)
 comment_stats_shorts = defaultdict(int)
 comment_stats_long_video = defaultdict(int)
 
-videos = videoRepository.get_by_id_above(0)
-name_category, category_views, category_likes, category_comments = get_video_info_by_category()
+#videos = videoRepository.get_by_id_above(0)
+#name_category, category_views, category_likes, category_comments = get_video_info_by_category()
 '''''
 for video in videos:
     i = video.id
@@ -297,10 +297,10 @@ for video in videos:
                 comment_stats_shorts[len_comm] += 1
             else:
                 comment_stats_long_video[len_comm] += 1
-
-category_num = 22  # category_num=-1 используется для вывода рейтинга вовлеченности по категориям
-chanel, channel_views, channel_likes, channel_comments_length, channel_comments_amount = get_video_info_by_channel(category_num)
-
+'''
+category_num = 28 # category_num=-1 используется для вывода рейтинга вовлеченности по категориям
+#chanel, channel_views, channel_likes, channel_comments_length, channel_comments_amount = get_video_info_by_channel(category_num)
+chanel, channel_views, channel_likes, channel_comments_length, channel_comments_amount = get_videos_from_same_channels("канал похожий на Химия – Просто")
 channel_sorted_data = sorted(zip(chanel, channel_views, channel_likes, channel_comments_amount),
                              key=lambda x: x[2],  # Сортировка по likes
                              reverse=True)
@@ -314,7 +314,7 @@ chanel_info_data = {
     'comments': comments_sorted[:15]
 }
 chanel_info_df = pd.DataFrame(chanel_info_data)
-
+'''
 video_sorted_data = sorted(zip(video_names, video_views, video_likes, video_comments_number),
                            key=lambda x: x[2],  # Сортировка по likes
                            reverse=True)
@@ -355,11 +355,12 @@ category_data = {
     'comments': comments_category_sorted
 }
 test_df2 = pd.DataFrame(category_data)
-
-#plot_engagement(chanel_info_df, titles_name="каналам")
+'''
+plot_engagement(chanel_info_df, titles_name="каналам")
 #plot_engagement(test_df2, titles_name="категориям")
 #plot_likes_comments_sorted_by_engagement(chanel_info_df)
-#plot_likes_comments_separate_engagement(chanel_info_df)
+plot_likes_comments_separate_engagement(chanel_info_df)
+#plot_engagement(chanel_info_df, titles_name="видео")
 #plot_engagement(video_info_df, titles_name="видео")
 #plot_likes_comments_sorted_by_engagement(video_info_df)
 #plot_likes_comments_separate_engagement(video_info_df)
@@ -383,3 +384,4 @@ chanel_info_data = {
 }
 chanel_info_df = pd.DataFrame(chanel_info_data)
 plot_likes_comments_separate_engagement(chanel_info_df, q_type = "тема")
+'''

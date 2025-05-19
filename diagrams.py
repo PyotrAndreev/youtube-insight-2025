@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib import ticker
 
 from db.connect.connect import Connect
 from db.repository.ChannelRepository import ChannelRepository
@@ -26,6 +27,9 @@ def plot_views_vs_video_length_points(df):
 
     plt.xscale('log')
     plt.yscale('log')
+
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(ticker.FixedLocator([1, 10, 60, 80, 100, 200, 300, 400, 800, 1200, 1600, 2400]))
     plt.title('Зависимость просмотров от длительности видео', fontsize=14)
     plt.xlabel('Длительность видео (секунды)', fontsize=12)
     plt.ylabel('Просмотры/ подписчики', fontsize=12)

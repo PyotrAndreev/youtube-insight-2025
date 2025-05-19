@@ -1,16 +1,14 @@
 import logging
-import ollama
 import torch
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from transformers import AutoModelForSequenceClassification, BertTokenizerFast
 from db.repository.ChannelRepository import ChannelRepository
-from datetime import datetime, timedelta
+from db.repository.PlaylistRepository import PlaylistRepository
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 
-from comment_analysis.comments_summary import comm_summary
+from comments_summary import comm_summary
 from db.connect.connect import Connect
 from db.repository.VideoRepository import VideoRepository
 
@@ -139,7 +137,7 @@ def get_negative_comments(comments_df: pd.DataFrame) -> pd.DataFrame:
 
 session = Connect()
 videoRepository = VideoRepository(Connect.session)
-video = videoRepository.get_by_id(8612)
+video = videoRepository.get_by_id(9743)
 comments = video.comments
 comm = []
 for comment in comments:
@@ -154,6 +152,7 @@ results = analyze_comments(sample_comments)
 negative_only = get_negative_comments(results['comments_with_sentiment'])
 
 print("\nОтрицательные комментарии:")
+print(negative_only)
 negative_comm_list = negative_only['text'].tolist()
 comm_summary(negative_comm_list)
 

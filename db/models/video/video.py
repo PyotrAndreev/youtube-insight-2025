@@ -31,6 +31,9 @@ class Video(Base):
     tags = Column(JSONB)
 
     channel_id = Column(Integer, ForeignKey("channels.id"))
+
+    playlist_id = Column(Integer, ForeignKey("playlists.id"))
     comments = relationship(Comment, back_populates="video")
 
     channel = relationship('Channel', back_populates='videos')
+    playlist = relationship('Playlist', back_populates='videos')

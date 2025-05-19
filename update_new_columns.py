@@ -2,6 +2,7 @@ from googleapiclient.discovery import build
 
 from db.connect.connect import Connect
 from db.models.channel.channel import Channel
+from db.models.playlist.playlist import Playlist
 from db.repository.ChannelRepository import ChannelRepository
 from db.repository.VideoRepository import VideoRepository
 
