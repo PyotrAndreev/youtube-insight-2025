@@ -230,6 +230,13 @@
 
 </details>
 
+<details>
+<summary>Продукты-понкуренты</summary> 
+
+- Cуммаризация ютуб-видео с Gemini и деплой с Google Cloud Run: [tutorial](https://yorko.github.io/2025/youtube-summarizer-cloud-run/), [GitHub](https://github.com/Yorko/youtube-summarizer-cloud-run/tree/main)
+- [viewstats](https://www.viewstats.com/)
+</details>
+
 ---
 
 ## 🚀 Установка и запуск
